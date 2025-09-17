@@ -1,0 +1,13 @@
+{
+  "Login": {
+    "title": "Đăng nhập vào tài khoản",
+    "button": "Đăng nhập",
+    "email_label": "Email",
+    "password_label": "Mật khẩu",
+    "email_placeholder": "Nhập email",
+    "password_placeholder": "Nhập mật khẩu",
+    "create_account": " Tạo tài khoản",
+    "Or": "Hoặc"
+    
+  }
+}
