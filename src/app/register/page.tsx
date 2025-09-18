@@ -8,17 +8,22 @@ import { useForm } from 'react-hook-form'
 import Link from 'next/link'
 import { routes } from '@/config/routes'
 
-export default function LoginPage() {
-  const t = useTranslations('Login')
+export default function RegisterPage() {
+  const t = useTranslations('Register')
   const schema = yup
     .object({
       email: yup
         .string()
         .email(t('errors.email_invalid'))
         .required(t('errors.email_required')),
-
       password: yup
         .string()
+        .required(t('errors.password_required'))
+        .min(8, t('errors.password_min'))
+        .matches(/[A-Za-z]/, t('errors.password_matches')),
+      confirm_password: yup
+        .string()
+        .oneOf([yup.ref('password')], t('errors.password_mismatch'))
         .required(t('errors.password_required'))
         .min(8, t('errors.password_min'))
         .matches(/[A-Za-z]/, t('errors.password_matches')),
@@ -43,10 +48,10 @@ export default function LoginPage() {
         <p className="mt-2 text-center text-sm text-gray-600 max-w">
           {t('Or')} <br></br>
           <Link
-            href={routes.register}
+            href={routes.login}
             className="font-medium text-blue-600 hover:text-blue-500"
           >
-            {t('create_account')}
+            {t('login')}
           </Link>
         </p>
       </div>
@@ -62,7 +67,6 @@ export default function LoginPage() {
               placeholder={t('email_placeholder')}
               labelClass="block text-sm font-medium text-gray-700"
               inputClass="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-              required
             />
 
             <FormField
@@ -75,7 +79,17 @@ export default function LoginPage() {
               placeholder={t('password_placeholder')}
               labelClass="block text-sm font-medium text-gray-700"
               inputClass="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-              required
+            />
+            <FormField
+              label={t('confirm_password_label')}
+              id="confirm_password"
+              {...register('confirm_password')}
+              type="password"
+              errorLog={errors.confirm_password?.message}
+              autoComplete="current-password"
+              placeholder={t('confirm_password_placeholder')}
+              labelClass="block text-sm font-medium text-gray-700"
+              inputClass="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
             />
             <Button
               type="submit"
