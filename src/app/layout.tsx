@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import I18Provider from '@/provider/I18Provider'
+import Provider from '@/Provider'
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html>
       <body>
-        <I18Provider>{children}</I18Provider>
+        <Provider>{children}</Provider>
       </body>
     </html>
   )
