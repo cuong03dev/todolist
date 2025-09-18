@@ -11,6 +11,7 @@ interface FormFieldProps {
   required?: boolean
   inputClass?: string
   labelClass?: string
+  errorLog?: string
 }
 
 export default function FormField({
@@ -23,6 +24,7 @@ export default function FormField({
   inputClass,
   labelClass,
   required,
+  ...props
 }: FormFieldProps) {
   return (
     <div>
@@ -36,6 +38,7 @@ export default function FormField({
           placeholder={placeholder}
           className={inputClass}
           required={required}
+          {...props}
         />
       </div>
     </div>
