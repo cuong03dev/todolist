@@ -7,6 +7,9 @@ import * as yup from 'yup'
 import { useForm } from 'react-hook-form'
 import Link from 'next/link'
 import { routes } from '@/config/routes'
+import { authService } from '@/services/auth'
+import { log } from 'console'
+import { toast, Toaster } from 'sonner'
 
 export default function RegisterPage() {
   const t = useTranslations('Register')
@@ -37,10 +40,25 @@ export default function RegisterPage() {
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
   })
-  const onSubmit = (data: FormValues) => console.log(data)
+  const onSubmit = async (data: FormValues) => {
+    const res = await authService
+      .register({
+        username: data.email,
+        password: data.password,
+      })
+      .then(() => {
+        toast.success(t('notify.register_success'))
+      })
+      .catch((err) => {
+        const message = err?.response?.data?.message
+
+        toast.error(message || t('notify.register_error'))
+      })
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <Toaster richColors />
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           {t('title')}
