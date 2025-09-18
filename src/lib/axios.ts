@@ -1,36 +1,35 @@
-import axios from "axios";
-
-const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/";
+import axios from 'axios'
+import Cookies from 'js-cookie'
+const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/'
 
 export const http = axios.create({
   baseURL: baseUrl,
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
-});
+})
 
 http.interceptors.request.use(
   (config) => {
-   const token = localStorage.getItem("token"); 
+    const token = Cookies.get('accessToken')
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${token}`
     }
-    return config;
+    return config
   },
   (err) => {
-    throw new Error(err);
-   
-  }
-);
+    throw new Error(err)
+  },
+)
 
 http.interceptors.response.use(
   (response) => response.data,
   (error) => {
     if (error.response?.status === 401) {
-      console.error("Unauthorized, logging out...");
-      localStorage.removeItem("token");
-      window.location.href = "/login";
+      console.error('Unauthorized, logging out...')
+      localStorage.removeItem('token')
+      window.location.href = '/login'
     }
-    return Promise.reject(error);
-  }
-);
+    return Promise.reject(error)
+  },
+)

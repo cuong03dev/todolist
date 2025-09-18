@@ -7,6 +7,8 @@ import * as yup from 'yup'
 import { useForm } from 'react-hook-form'
 import Link from 'next/link'
 import { routes } from '@/config/routes'
+import { authService } from '@/services/auth'
+import Cookies from 'js-cookie'
 
 export default function LoginPage() {
   const t = useTranslations('Login')
@@ -32,7 +34,15 @@ export default function LoginPage() {
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
   })
-  const onSubmit = (data: FormValues) => console.log(data)
+  const onSubmit = async (data: FormValues) => {
+    const res = await authService.login({
+      username: data.email,
+      password: data.password,
+    })
+
+    const { accessToken } = res
+    Cookies.set('accessToken', accessToken)
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
