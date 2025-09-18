@@ -1,12 +1,5 @@
-type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
-  errorLog?: string
-}
-
-export default function Input({ errorLog, ...props }: InputProps) {
-  return (
-    <>
-      <input {...props} autoComplete="email"></input>
-      {!!errorLog && <p className="mt-2 text-sm text-red-600">{errorLog}</p>}
-    </>
-  )
+export default function Input(
+  props: React.InputHTMLAttributes<HTMLInputElement>,
+) {
+  return <input {...props} autoComplete="email"></input>
 }
