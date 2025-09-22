@@ -8,6 +8,8 @@ import { useForm } from 'react-hook-form'
 import Link from 'next/link'
 import { routes } from '@/config/routes'
 import { LoginFormValues, loginSchema } from '@/schemas/auth.schema'
+import { authService } from '@/services/auth'
+import { toast } from 'sonner'
 
 export default function LoginPage() {
   const t = useTranslations('Login')
@@ -18,7 +20,27 @@ export default function LoginPage() {
   } = useForm<LoginFormValues>({
     resolver: yupResolver(loginSchema(t)),
   })
-  const onSubmit = (data: LoginFormValues) => console.log(data)
+  const onSubmit = async (data: LoginFormValues) => {
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: data.email,
+          password: data.password,
+        }),
+      })
+
+      if (!res.ok) {
+        throw new Error('Login failed')
+      }
+
+      toast.success(t('notify.login_success'))
+      window.location.href = '/todo'
+    } catch (error: any) {
+      toast.error(error.message || t('notify.login_error'))
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
