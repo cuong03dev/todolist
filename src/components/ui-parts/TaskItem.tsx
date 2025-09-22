@@ -1,10 +1,12 @@
 import React from 'react'
 import Input from '../ui/Input'
 import Button from '../ui/Button'
+import { useTranslations } from 'next-intl'
 
 type Props = {}
 
 export default function TaskItem({}: Props) {
+  const t = useTranslations('Todo')
   return (
     <div className="flex items-center justify-between p-4 group hover:bg-gray-50">
       <div className="flex items-center gap-3">
@@ -16,10 +18,10 @@ export default function TaskItem({}: Props) {
       </div>
       <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
         <Button className="text-red-500 hover:text-red-700 text-sm font-medium">
-          Delete
+          {t('delete_button')}
         </Button>
         <Button className="text-blue-500 hover:text-blue-700 text-sm font-medium">
-          Edit
+          {t('update_button')}
         </Button>
       </div>
     </div>
