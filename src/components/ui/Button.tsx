@@ -1,10 +1,15 @@
 export default function Button({
   children,
   className,
+  onClick,
 }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <div>
-      <button type="submit" className={className + ' cursor-pointer'}>
+      <button
+        onClick={onClick}
+        type="submit"
+        className={className + ' cursor-pointer'}
+      >
         {children}
       </button>
     </div>

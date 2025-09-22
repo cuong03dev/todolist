@@ -31,9 +31,6 @@ http.interceptors.response.use(
       const refreshToken = Cookies.get('refreshToken')
 
       if (refreshToken) {
-        console.log(refreshToken)
-        console.log(`${baseUrl}user/reissue`)
-
         try {
           const res = await axios.post(
             `${baseUrl}user/reissue`,
@@ -44,11 +41,8 @@ http.interceptors.response.use(
               withCredentials: true,
             },
           )
-          console.log(res)
           const newAccessToken = res?.data
           Cookies.set('accessToken', newAccessToken, { expires: 1 / 96 })
-
-          console.log(newAccessToken)
 
           error.config.headers.Authorization = `Bearer ${newAccessToken}`
           return http.request(error.config)

@@ -48,6 +48,7 @@
   "Todo": {
     "title": "Danh sách công việc",
     "add_task_placeholder": "Thêm công việc mới",
+    "add_task_content_placeholder": "Nội dung công việc",
     "add_task_button": "Thêm",
     "delete_button": "Xóa",
     "update_button": "Sửa",
