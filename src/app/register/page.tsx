@@ -8,57 +8,34 @@ import { useForm } from 'react-hook-form'
 import Link from 'next/link'
 import { routes } from '@/config/routes'
 import { authService } from '@/services/auth'
-import { log } from 'console'
-import { toast, Toaster } from 'sonner'
+import { toast } from 'sonner'
+import { RegisterFormValues, registerSchema } from '@/schemas/auth.schema'
 
 export default function RegisterPage() {
   const t = useTranslations('Register')
-  const schema = yup
-    .object({
-      email: yup
-        .string()
-        .email(t('errors.email_invalid'))
-        .required(t('errors.email_required')),
-      password: yup
-        .string()
-        .required(t('errors.password_required'))
-        .min(8, t('errors.password_min'))
-        .matches(/[A-Za-z]/, t('errors.password_matches')),
-      confirm_password: yup
-        .string()
-        .oneOf([yup.ref('password')], t('errors.password_mismatch'))
-        .required(t('errors.password_required'))
-        .min(8, t('errors.password_min'))
-        .matches(/[A-Za-z]/, t('errors.password_matches')),
-    })
-    .required()
-  type FormValues = yup.InferType<typeof schema>
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormValues>({
-    resolver: yupResolver(schema),
+  } = useForm<RegisterFormValues>({
+    resolver: yupResolver(registerSchema(t)),
   })
-  const onSubmit = async (data: FormValues) => {
-    const res = await authService
-      .register({
+  const onSubmit = async (data: RegisterFormValues) => {
+    try {
+      await authService.register({
         username: data.email,
         password: data.password,
       })
-      .then(() => {
-        toast.success(t('notify.register_success'))
-      })
-      .catch((err) => {
-        const message = err?.response?.data?.message
+      toast.success(t('notify.register_success'))
+    } catch (error: any) {
+      const message = error?.response?.data?.message
 
-        toast.error(message || t('notify.register_error'))
-      })
+      toast.error(message || t('notify.register_error'))
+    }
   }
-
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <Toaster richColors />
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           {t('title')}
@@ -83,8 +60,7 @@ export default function RegisterPage() {
               errorLog={errors.email?.message}
               autoComplete="email"
               placeholder={t('email_placeholder')}
-              labelClass="block text-sm font-medium text-gray-700"
-              inputClass="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              isAuthInput
             />
 
             <FormField
@@ -95,8 +71,7 @@ export default function RegisterPage() {
               errorLog={errors.password?.message}
               autoComplete="current-password"
               placeholder={t('password_placeholder')}
-              labelClass="block text-sm font-medium text-gray-700"
-              inputClass="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              isAuthInput
             />
             <FormField
               label={t('confirm_password_label')}
@@ -106,8 +81,7 @@ export default function RegisterPage() {
               errorLog={errors.confirm_password?.message}
               autoComplete="current-password"
               placeholder={t('confirm_password_placeholder')}
-              labelClass="block text-sm font-medium text-gray-700"
-              inputClass="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              isAuthInput
             />
             <Button
               type="submit"

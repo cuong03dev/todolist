@@ -7,32 +7,18 @@ import * as yup from 'yup'
 import { useForm } from 'react-hook-form'
 import Link from 'next/link'
 import { routes } from '@/config/routes'
+import { LoginFormValues, loginSchema } from '@/schemas/auth.schema'
 
 export default function LoginPage() {
   const t = useTranslations('Login')
-  const schema = yup
-    .object({
-      email: yup
-        .string()
-        .email(t('errors.email_invalid'))
-        .required(t('errors.email_required')),
-
-      password: yup
-        .string()
-        .required(t('errors.password_required'))
-        .min(8, t('errors.password_min'))
-        .matches(/[A-Za-z]/, t('errors.password_matches')),
-    })
-    .required()
-  type FormValues = yup.InferType<typeof schema>
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormValues>({
-    resolver: yupResolver(schema),
+  } = useForm<LoginFormValues>({
+    resolver: yupResolver(loginSchema(t)),
   })
-  const onSubmit = (data: FormValues) => console.log(data)
+  const onSubmit = (data: LoginFormValues) => console.log(data)
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -60,8 +46,7 @@ export default function LoginPage() {
               errorLog={errors.email?.message}
               autoComplete="email"
               placeholder={t('email_placeholder')}
-              labelClass="block text-sm font-medium text-gray-700"
-              inputClass="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              isAuthInput
               required
             />
 
@@ -73,8 +58,7 @@ export default function LoginPage() {
               errorLog={errors.password?.message}
               autoComplete="current-password"
               placeholder={t('password_placeholder')}
-              labelClass="block text-sm font-medium text-gray-700"
-              inputClass="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              isAuthInput
               required
             />
             <Button
