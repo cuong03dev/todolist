@@ -4,7 +4,7 @@ export default function Button({
 }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <div>
-      <button type="submit" className={className}>
+      <button type="submit" className={className + ' cursor-pointer'}>
         {children}
       </button>
     </div>
