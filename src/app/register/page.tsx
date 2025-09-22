@@ -7,19 +7,33 @@ import * as yup from 'yup'
 import { useForm } from 'react-hook-form'
 import Link from 'next/link'
 import { routes } from '@/config/routes'
-import { LoginFormValues, loginSchema } from '@/schemas/auth.schema'
+import { authService } from '@/services/auth'
+import { toast } from 'sonner'
+import { RegisterFormValues, registerSchema } from '@/schemas/auth.schema'
 
-export default function LoginPage() {
-  const t = useTranslations('Login')
+export default function RegisterPage() {
+  const t = useTranslations('Register')
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormValues>({
-    resolver: yupResolver(loginSchema(t)),
+  } = useForm<RegisterFormValues>({
+    resolver: yupResolver(registerSchema(t)),
   })
-  const onSubmit = (data: LoginFormValues) => console.log(data)
+  const onSubmit = async (data: RegisterFormValues) => {
+    try {
+      await authService.register({
+        username: data.email,
+        password: data.password,
+      })
+      toast.success(t('notify.register_success'))
+    } catch (error: any) {
+      const message = error?.response?.data?.message
 
+      toast.error(message || t('notify.register_error'))
+    }
+  }
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -29,10 +43,10 @@ export default function LoginPage() {
         <p className="mt-2 text-center text-sm text-gray-600 max-w">
           {t('Or')} <br></br>
           <Link
-            href={routes.register}
+            href={routes.login}
             className="font-medium text-blue-600 hover:text-blue-500"
           >
-            {t('create_account')}
+            {t('login')}
           </Link>
         </p>
       </div>
@@ -47,7 +61,6 @@ export default function LoginPage() {
               autoComplete="email"
               placeholder={t('email_placeholder')}
               isAuthInput
-              required
             />
 
             <FormField
@@ -59,7 +72,16 @@ export default function LoginPage() {
               autoComplete="current-password"
               placeholder={t('password_placeholder')}
               isAuthInput
-              required
+            />
+            <FormField
+              label={t('confirm_password_label')}
+              id="confirm_password"
+              {...register('confirm_password')}
+              type="password"
+              errorLog={errors.confirm_password?.message}
+              autoComplete="current-password"
+              placeholder={t('confirm_password_placeholder')}
+              isAuthInput
             />
             <Button
               type="submit"
