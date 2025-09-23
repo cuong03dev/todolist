@@ -1,79 +1,96 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Input from '../ui/Input'
 import Button from '../ui/Button'
 import { useTranslations } from 'next-intl'
 import {
+  addTodo,
   deleteTodo,
   editTodo,
   setEditingValue,
 } from '@/features/todo/todoSlice'
 import { useAppDispatch } from '@/store/hooks'
 import { toast } from 'sonner'
+import Modal from './Modal'
+import TodoInput from './TodoInput'
 
 interface Props {
   task?: any
 }
 
 export default function TaskItem({ task }: Props) {
+  const [isOpen, setIsOpen] = useState(false)
   const t = useTranslations('Todo')
   const dispatch = useAppDispatch()
   const handleDelete = (id: string) => {
     dispatch(deleteTodo(id))
     toast.success(t('notify.delete_success'))
   }
-  const handleEdit = (task: Props) => {
-    dispatch(setEditingValue(task))
+  const handleClose = () => {
+    setIsOpen(!isOpen)
   }
 
   return (
-    <div className="justify-between p-4 group hover:bg-gray-50">
-      <div className="flex items-center gap-3 w-full">
-        <Input
-          onChange={() => {
-            dispatch(
-              editTodo({
-                _id: task._id,
-                title: task.title,
-                content: task.content,
-                deadline: task.deadline,
-                is_finished: !task.is_finished,
-              }),
-            )
-            toast.success(t('notify.status_change_success'))
-          }}
-          checked={!!task.is_finished}
-          type="checkbox"
-          className="w-5 h-5 outline-none text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-        />
-        <div className="flex justify-between items-center w-full pr-5">
-          {task.is_finished ? (
-            <div className="text-gray-400 font-bold text-2xl line-through">
-              {task.title}
-            </div>
-          ) : (
-            <div className="text-gray-900 font-bold text-2xl">{task.title}</div>
-          )}
-        </div>
-        <div className="text-gray-900 font-medium text-[14px] w-[100px] text-right">
-          {task.deadline}
-        </div>
-      </div>
-      <div className="px-3 py-1">{task.content}</div>
+    <div className="justify-between cursor-pointer p-4 group hover:bg-gray-50 rounded-2xl border border-gray-300">
+      <div className=" gap-3 w-full">
+        <div className="flex w-full items-center pr-5 gap-4">
+          <label className="flex items-center cursor-pointer">
+            <Input
+              type="checkbox"
+              checked={!!task.is_finished}
+              onClick={(e) => e.stopPropagation()}
+              onChange={() => {
+                dispatch(
+                  editTodo({
+                    _id: task._id,
+                    title: task.title,
+                    content: task.content,
+                    deadline: task.deadline,
+                    is_finished: !task.is_finished,
+                  }),
+                )
+                toast.success(t('notify.status_change_success'))
+              }}
+              className="peer hidden"
+            />
+            <span
+              className="w-8 h-8 rounded-full border-2 border-blue-600 relative
+      peer-checked:after:content-[''] peer-checked:after:w-2.5 peer-checked:after:h-2.5
+      peer-checked:after:bg-blue-600 peer-checked:after:rounded-full
+      peer-checked:after:absolute peer-checked:after:top-1/2 peer-checked:after:left-1/2
+      peer-checked:after:-translate-x-1/2 peer-checked:after:-translate-y-1/2"
+            ></span>
+          </label>
 
-      <div className="flex gap-2 justify-end">
-        <Button
-          onClick={() => handleDelete(task._id)}
-          className="text-white bg-red-700 px-4 py-2 rounded-xl text-sm font-medium "
-        >
-          {t('delete_button')}
-        </Button>
-        <Button
-          onClick={() => handleEdit(task)}
-          className="text-white bg-blue-500 px-4 py-2 rounded-xl text-sm font-medium"
-        >
-          {t('update_button')}
-        </Button>
+          <div onClick={() => setIsOpen(true)} className="w-full">
+            <div className="text-gray-900 font-bold text-xl">{task.title}</div>
+            <div className="text-gray-600 font-medium text-[14px]">
+              {task.deadline}
+            </div>
+          </div>
+        </div>
       </div>
+
+      <Modal
+        title={t('add_task_placeholder')}
+        open={isOpen}
+        onClose={handleClose}
+      >
+        <TodoInput
+          mode="edit"
+          t={t}
+          defaultValues={task}
+          onSubmit={(values) => {
+            dispatch(editTodo({ ...task, ...values }))
+            toast.success(t('notify.edit_success'))
+            handleClose()
+          }}
+          onClose={handleClose}
+          onDelete={() => {
+            handleDelete(task._id)
+            handleClose()
+          }}
+        />
+      </Modal>
     </div>
   )
 }

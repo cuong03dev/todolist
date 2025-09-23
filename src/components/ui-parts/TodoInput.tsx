@@ -1,56 +1,39 @@
 'use client'
-import React, { useEffect } from 'react'
+import React from 'react'
 import Input from '../ui/Input'
 import Button from '../ui/Button'
-import { useTranslations } from 'next-intl'
 import { TodoFormValues, todoSchema } from '@/schemas/todo.schema'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import { addTodo, editTodo } from '@/features/todo/todoSlice'
-import { toast } from 'sonner'
 
-type Props = {}
+interface Props {
+  onClose: () => void
+  t: any
+  onSubmit?: (data: TodoFormValues) => void
+  defaultValues?: Partial<TodoFormValues>
+  mode?: 'add' | 'edit'
+  onDelete?: (id: string) => void
+  onEdit?: (data: TodoFormValues) => void
+}
 
-export default function TodoInput({ ...props }: Props) {
-  const dispatch = useAppDispatch()
-  const t = useTranslations('Todo')
-  const editingValue = useAppSelector((state) => state.todo.editingValue)
+export default function TodoInput({
+  t,
+  onSubmit,
+  defaultValues,
+  mode,
+  onDelete,
+  onEdit,
+  ...props
+}: Props) {
   const {
     register,
-    reset,
     handleSubmit,
     formState: { errors },
   } = useForm<TodoFormValues>({
+    defaultValues,
     resolver: yupResolver(todoSchema(t)),
   })
 
-  useEffect(() => {
-    if (editingValue) {
-      reset({
-        title: editingValue.title,
-        content: editingValue.content,
-        deadline: editingValue.deadline,
-      })
-    }
-  }, [editingValue, reset])
-  const onSubmit = (data: TodoFormValues) => {
-    const payload = {
-      title: data.title,
-      content: data.content ?? '',
-      deadline: data.deadline ?? '',
-      is_finished: data.is_finished ?? false,
-    }
-
-    if (editingValue) {
-      dispatch(editTodo({ ...editingValue, ...payload }))
-      toast.success(t('notify.edit_success'))
-    } else {
-      dispatch(addTodo(payload))
-      toast.success(t('notify.created_success'))
-    }
-    reset()
-  }
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -60,7 +43,7 @@ export default function TodoInput({ ...props }: Props) {
         <Input
           {...props}
           {...register('title')}
-          className="w-full px-3 py-2 text-gray-500 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-3 py-2 text-gray-500 bg-white border border-gray-300 rounded outline-none"
           type="text"
           id="taskInput"
           placeholder={t('add_task_placeholder')}
@@ -71,25 +54,41 @@ export default function TodoInput({ ...props }: Props) {
         <textarea
           {...props}
           {...register('content')}
-          className="w-full mt-5 px-3 py-2 text-gray-500 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full mt-5 px-3 py-2 text-gray-500 bg-white border border-gray-300 rounded outline-none"
           placeholder={t('add_task_content_placeholder')}
         />
         {errors.content && (
           <p className="text-sm text-red-500 mt-2">{errors.content.message}</p>
         )}
-        <input
+        <Input
           {...props}
           {...register('deadline')}
           defaultValue={new Date().toISOString().split('T')[0]}
-          className="w-full mt-5 px-3 py-2 text-gray-500 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full mt-5 px-3 py-2 text-gray-500 bg-white border border-gray-300 rounded outline-none"
           type="date"
         />
         {errors.deadline && (
           <p className="text-sm text-red-500 mt-2">{errors.deadline.message}</p>
         )}
-        <Button className="px-4 mt-5 py-2 cursor-pointer bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
-          {t('add_task_button')}
-        </Button>
+        {mode === 'add' && (
+          <Button className="px-4 mt-5 py-2 cursor-pointer bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+            {t('add_task_button')}
+          </Button>
+        )}
+
+        {mode === 'edit' && (
+          <div className="flex gap-4 mt-5">
+            <Button
+              onClick={onDelete}
+              className="text-white bg-red-700 px-4 py-2 rounded-xl text-sm font-medium "
+            >
+              {t('delete_button')}
+            </Button>
+            <Button className="text-white bg-blue-500 px-4 py-2 rounded-xl text-sm font-medium">
+              {t('update_button')}
+            </Button>
+          </div>
+        )}
       </div>
     </form>
   )
