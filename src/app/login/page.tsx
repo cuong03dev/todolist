@@ -3,12 +3,10 @@ import FormField from '@/components/ui-parts/FormField'
 import Button from '@/components/ui/Button'
 import { useTranslations } from 'next-intl'
 import { yupResolver } from '@hookform/resolvers/yup'
-import * as yup from 'yup'
 import { useForm } from 'react-hook-form'
 import Link from 'next/link'
 import { routes } from '@/config/routes'
 import { LoginFormValues, loginSchema } from '@/schemas/auth.schema'
-import { authService } from '@/services/auth'
 import { toast } from 'sonner'
 
 export default function LoginPage() {

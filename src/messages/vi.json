@@ -52,7 +52,7 @@
     "add_task_content_placeholder": "Nội dung công việc",
     "add_task_button": "Thêm",
     "delete_button": "Xóa",
-    "update_button": "Sửa",
+    "update_button": "Lưu",
     "empty": "Danh sách trống",
     "errors": {
       "required": "Công việc không được để trống",

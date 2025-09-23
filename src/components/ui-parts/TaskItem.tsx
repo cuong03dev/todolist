@@ -1,13 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Input from '../ui/Input'
-import Button from '../ui/Button'
 import { useTranslations } from 'next-intl'
-import {
-  addTodo,
-  deleteTodo,
-  editTodo,
-  setEditingValue,
-} from '@/features/todo/todoSlice'
+import { deleteTodo, editTodo } from '@/features/todo/todoSlice'
 import { useAppDispatch } from '@/store/hooks'
 import { toast } from 'sonner'
 import Modal from './Modal'
@@ -56,7 +50,7 @@ export default function TaskItem({ task, isFinished }: Props) {
               className="peer hidden"
             />
             <span
-              className="w-8 h-8 rounded-full border-2 border-blue-600 relative
+              className="w-8 h-8 rounded-full border-4 border-blue-600 relative
       peer-checked:after:content-[''] peer-checked:after:w-2.5 peer-checked:after:h-2.5
       peer-checked:after:bg-blue-600 peer-checked:after:rounded-full
       peer-checked:after:absolute peer-checked:after:top-1/2 peer-checked:after:left-1/2
@@ -78,24 +72,29 @@ export default function TaskItem({ task, isFinished }: Props) {
           </div>
         </div>
       </div>
-
-      <Modal title={t('detail_task_title')} open={isOpen} onClose={handleClose}>
-        <TodoInput
-          mode="edit"
-          t={t}
-          defaultValues={task}
-          onSubmit={(values) => {
-            dispatch(editTodo({ ...task, ...values }))
-            toast.success(t('notify.edit_success'))
-            handleClose()
-          }}
+      {!isFinished && (
+        <Modal
+          title={t('detail_task_title')}
+          open={isOpen}
           onClose={handleClose}
-          onDelete={() => {
-            handleDelete(task._id)
-            handleClose()
-          }}
-        />
-      </Modal>
+        >
+          <TodoInput
+            mode="edit"
+            t={t}
+            defaultValues={task}
+            onSubmit={(values) => {
+              dispatch(editTodo({ ...task, ...values }))
+              toast.success(t('notify.edit_success'))
+              handleClose()
+            }}
+            onClose={handleClose}
+            onDelete={() => {
+              handleDelete(task._id)
+              handleClose()
+            }}
+          />
+        </Modal>
+      )}
     </div>
   )
 }
