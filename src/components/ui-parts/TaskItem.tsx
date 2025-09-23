@@ -15,9 +15,10 @@ import TodoInput from './TodoInput'
 
 interface Props {
   task?: any
+  isFinished?: boolean
 }
 
-export default function TaskItem({ task }: Props) {
+export default function TaskItem({ task, isFinished }: Props) {
   const [isOpen, setIsOpen] = useState(false)
   const t = useTranslations('Todo')
   const dispatch = useAppDispatch()
@@ -30,7 +31,9 @@ export default function TaskItem({ task }: Props) {
   }
 
   return (
-    <div className="justify-between cursor-pointer p-4 group hover:bg-gray-50 rounded-2xl border border-gray-300">
+    <div
+      className={`justify-between cursor-pointer p-4 group hover:bg-gray-50 rounded-2xl border border-gray-300 ${isFinished && 'opacity-50'}`}
+    >
       <div className=" gap-3 w-full">
         <div className="flex w-full items-center pr-5 gap-4">
           <label className="flex items-center cursor-pointer">
@@ -62,19 +65,21 @@ export default function TaskItem({ task }: Props) {
           </label>
 
           <div onClick={() => setIsOpen(true)} className="w-full">
-            <div className="text-gray-900 font-bold text-xl">{task.title}</div>
-            <div className="text-gray-600 font-medium text-[14px]">
+            <div
+              className={`text-gray-900 font-bold text-xl ${isFinished && 'line-through'}`}
+            >
+              {task.title}
+            </div>
+            <div
+              className={`text-gray-600 font-medium text-[14px] ${isFinished && 'line-through'}`}
+            >
               {task.deadline}
             </div>
           </div>
         </div>
       </div>
 
-      <Modal
-        title={t('add_task_placeholder')}
-        open={isOpen}
-        onClose={handleClose}
-      >
+      <Modal title={t('detail_task_title')} open={isOpen} onClose={handleClose}>
         <TodoInput
           mode="edit"
           t={t}

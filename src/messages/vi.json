@@ -48,10 +48,12 @@
   "Todo": {
     "title": "Danh sách công việc",
     "add_task_placeholder": "Thêm công việc mới",
+    "detail_task_title": "Chi tiết công việc",
     "add_task_content_placeholder": "Nội dung công việc",
     "add_task_button": "Thêm",
     "delete_button": "Xóa",
     "update_button": "Sửa",
+    "empty": "Danh sách trống",
     "errors": {
       "required": "Công việc không được để trống",
       "content_required": "Nội dung công việc không được để trống"

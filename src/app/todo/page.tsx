@@ -1,12 +1,15 @@
 'use client'
+import Empty from '@/components/ui-parts/Empty'
 import Modal from '@/components/ui-parts/Modal'
 import Tasks from '@/components/ui-parts/Tasks'
 import TodoInput from '@/components/ui-parts/TodoInput'
 import Button from '@/components/ui/Button'
+import { EmptyIcon } from '@/components/ui/Icon'
 import { addTodo, getAll } from '@/features/todo/todoSlice'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 export default function Todo() {
   const dispatch = useAppDispatch()
@@ -22,33 +25,49 @@ export default function Todo() {
   }
   return (
     <div className="max-w-3xl flex mx-auto mt-10 bg-white  shadow-lg ">
-      <div className="border border-gray-300 p-6 rounded-lg w-full ">
-        <Modal
-          title={t('add_task_placeholder')}
-          open={isOpen}
-          onClose={handleClose}
-        >
-          <TodoInput
-            mode="add"
-            t={t}
-            onSubmit={(values) => {
-              dispatch(addTodo(values))
-              handleClose()
-            }}
+      <div className="border border-gray-300 p-6 rounded-lg w-full">
+        <div className=" ">
+          <Modal
+            title={t('add_task_placeholder')}
+            open={isOpen}
             onClose={handleClose}
-          />
-        </Modal>
-        <div className="flex justify-between items-center mb-4">
-          <div className="text-3xl font-medium">Todo</div>
-          <Button
-            onClick={() => setIsOpen(true)}
-            type="button"
-            className="text-white bg-[#3a3a3c]  focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 "
           >
-            {t('add_task_button')}
-          </Button>
+            <TodoInput
+              mode="add"
+              t={t}
+              onSubmit={(values) => {
+                dispatch(addTodo(values))
+                handleClose()
+                toast.success(t('notify.created_success'))
+              }}
+              onClose={handleClose}
+            />
+          </Modal>
+          <div className="flex justify-between items-center mb-4">
+            <div className="text-3xl font-medium">Todo</div>
+            <Button
+              onClick={() => setIsOpen(true)}
+              type="button"
+              className="text-white bg-[#3a3a3c]  focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 "
+            >
+              {t('add_task_button')}
+            </Button>
+          </div>
+          {tasks.filter((task) => !task.is_finished).length === 0 && (
+            <Empty
+              icon={<EmptyIcon className="w-10 h-10" />}
+              title={t('empty')}
+            />
+          )}
+          <Tasks tasks={tasks.filter((task) => !task.is_finished)} />
         </div>
-        <Tasks tasks={tasks} />
+        <div className="mt-10">
+          {tasks.filter((task) => task.is_finished).length > 0 && (
+            <div className="font-bold py-3 text-[20px]">Completed</div>
+          )}
+
+          <Tasks isFinished tasks={tasks.filter((task) => task.is_finished)} />
+        </div>
       </div>
     </div>
   )
