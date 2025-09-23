@@ -2,7 +2,7 @@ import React from 'react'
 import Input from '../ui/Input'
 import Button from '../ui/Button'
 import { useTranslations } from 'next-intl'
-import { deleteTodo } from '@/features/todo/todoSlice'
+import { deleteTodo, setEditingValue } from '@/features/todo/todoSlice'
 import { useAppDispatch } from '@/store/hooks'
 
 interface Props {
@@ -14,6 +14,9 @@ export default function TaskItem({ task }: Props) {
   const dispatch = useAppDispatch()
   const handleDelete = (id: string) => {
     dispatch(deleteTodo(id))
+  }
+  const handleEdit = (task: Props) => {
+    dispatch(setEditingValue(task))
   }
 
   return (
@@ -39,7 +42,10 @@ export default function TaskItem({ task }: Props) {
         >
           {t('delete_button')}
         </Button>
-        <Button className="text-white bg-blue-500 px-4 py-2 rounded-xl text-sm font-medium">
+        <Button
+          onClick={() => handleEdit(task)}
+          className="text-white bg-blue-500 px-4 py-2 rounded-xl text-sm font-medium"
+        >
           {t('update_button')}
         </Button>
       </div>

@@ -1,19 +1,20 @@
 'use client'
-import React from 'react'
+import React, { useEffect } from 'react'
 import Input from '../ui/Input'
 import Button from '../ui/Button'
 import { useTranslations } from 'next-intl'
 import { TodoFormValues, todoSchema } from '@/schemas/todo.schema'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useAppDispatch } from '@/store/hooks'
-import { addTodo } from '@/features/todo/todoSlice'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { addTodo, editTodo } from '@/features/todo/todoSlice'
 
 type Props = {}
 
 export default function TodoInput({ ...props }: Props) {
   const dispatch = useAppDispatch()
   const t = useTranslations('Todo')
+  const editingValue = useAppSelector((state) => state.todo.editingValue)
   const {
     register,
     reset,
@@ -23,6 +24,15 @@ export default function TodoInput({ ...props }: Props) {
     resolver: yupResolver(todoSchema(t)),
   })
 
+  useEffect(() => {
+    if (editingValue) {
+      reset({
+        title: editingValue.title,
+        content: editingValue.content,
+        deadline: editingValue.deadline,
+      })
+    }
+  }, [editingValue, reset])
   const onSubmit = (data: TodoFormValues) => {
     const payload = {
       title: data.title,
@@ -31,11 +41,11 @@ export default function TodoInput({ ...props }: Props) {
       is_finished: data.is_finished ?? false,
     }
 
-    dispatch(
-      addTodo({
-        ...payload,
-      }),
-    )
+    if (editingValue) {
+      dispatch(editTodo({ ...editingValue, ...payload }))
+    } else {
+      dispatch(addTodo(payload))
+    }
     reset()
   }
   return (

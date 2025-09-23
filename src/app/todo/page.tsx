@@ -7,7 +7,7 @@ import { useEffect } from 'react'
 
 export default function Todo() {
   const dispatch = useAppDispatch()
-  const tasks = useAppSelector((state) => state.todo)
+  const tasks = useAppSelector((state) => state.todo.value)
 
   useEffect(() => {
     dispatch(getAll())
