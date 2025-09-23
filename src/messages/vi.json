@@ -55,6 +55,12 @@
     "errors": {
       "required": "Công việc không được để trống",
       "content_required": "Nội dung công việc không được để trống"
+    },
+    "notify": {
+      "created_success": "Tạo công việc thành công!",
+      "edit_success": "Chỉnh sửa công việc thành công!",
+      "delete_success": "Xóa công việc thành công!",
+      "status_change_success": "Cập nhật trạng thái công việc thành công!"
     }
   }
 }

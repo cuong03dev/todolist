@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { addTodo, editTodo } from '@/features/todo/todoSlice'
+import { toast } from 'sonner'
 
 type Props = {}
 
@@ -43,8 +44,10 @@ export default function TodoInput({ ...props }: Props) {
 
     if (editingValue) {
       dispatch(editTodo({ ...editingValue, ...payload }))
+      toast.success(t('notify.edit_success'))
     } else {
       dispatch(addTodo(payload))
+      toast.success(t('notify.created_success'))
     }
     reset()
   }

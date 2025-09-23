@@ -51,8 +51,8 @@ export const deleteTodo = createAsyncThunk(
   },
 )
 interface TodoState {
-  value: any[] // danh sách todo
-  editingValue: any | null // todo đang chỉnh sửa
+  value: any[]
+  editingValue: any | null
 }
 
 const initialState: TodoState = {

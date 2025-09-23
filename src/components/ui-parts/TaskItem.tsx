@@ -2,8 +2,13 @@ import React from 'react'
 import Input from '../ui/Input'
 import Button from '../ui/Button'
 import { useTranslations } from 'next-intl'
-import { deleteTodo, setEditingValue } from '@/features/todo/todoSlice'
+import {
+  deleteTodo,
+  editTodo,
+  setEditingValue,
+} from '@/features/todo/todoSlice'
 import { useAppDispatch } from '@/store/hooks'
+import { toast } from 'sonner'
 
 interface Props {
   task?: any
@@ -14,6 +19,7 @@ export default function TaskItem({ task }: Props) {
   const dispatch = useAppDispatch()
   const handleDelete = (id: string) => {
     dispatch(deleteTodo(id))
+    toast.success(t('notify.delete_success'))
   }
   const handleEdit = (task: Props) => {
     dispatch(setEditingValue(task))
@@ -23,11 +29,30 @@ export default function TaskItem({ task }: Props) {
     <div className="justify-between p-4 group hover:bg-gray-50">
       <div className="flex items-center gap-3 w-full">
         <Input
+          onChange={() => {
+            dispatch(
+              editTodo({
+                _id: task._id,
+                title: task.title,
+                content: task.content,
+                deadline: task.deadline,
+                is_finished: !task.is_finished,
+              }),
+            )
+            toast.success(t('notify.status_change_success'))
+          }}
+          checked={!!task.is_finished}
           type="checkbox"
-          className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+          className="w-5 h-5 outline-none text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
         />
         <div className="flex justify-between items-center w-full pr-5">
-          <div className="text-gray-900 font-bold text-2xl">{task.title}</div>
+          {task.is_finished ? (
+            <div className="text-gray-400 font-bold text-2xl line-through">
+              {task.title}
+            </div>
+          ) : (
+            <div className="text-gray-900 font-bold text-2xl">{task.title}</div>
+          )}
         </div>
         <div className="text-gray-900 font-medium text-[14px] w-[100px] text-right">
           {task.deadline}
