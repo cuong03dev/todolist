@@ -16,6 +16,7 @@ export default function TodoInput({ ...props }: Props) {
   const t = useTranslations('Todo')
   const {
     register,
+    reset,
     handleSubmit,
     formState: { errors },
   } = useForm<TodoFormValues>({
@@ -35,38 +36,45 @@ export default function TodoInput({ ...props }: Props) {
         ...payload,
       }),
     )
+    reset()
   }
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="p-4 border-b border-gray-200"
     >
-      <div className="flex gap-2">
-        <div className="">
-          <Input
-            {...props}
-            {...register('title')}
-            className="w-full px-3 py-2 text-gray-500 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            type="text"
-            id="taskInput"
-            placeholder={t('add_task_placeholder')}
-          />
-          {errors.title && (
-            <p className="text-sm text-red-500 mt-2">{errors.title.message}</p>
-          )}
-          <textarea
-            {...props}
-            {...register('content')}
-            className="w-full mt-5 px-3 py-2 text-gray-500 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder={t('add_task_content_placeholder')}
-          />
-          {errors.content && (
-            <p className="text-sm text-red-500 mt-2">
-              {errors.content.message}
-            </p>
-          )}
-        </div>
-        <Button className="px-4 py-2 cursor-pointer bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+      <div className="">
+        <Input
+          {...props}
+          {...register('title')}
+          className="w-full px-3 py-2 text-gray-500 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          type="text"
+          id="taskInput"
+          placeholder={t('add_task_placeholder')}
+        />
+        {errors.title && (
+          <p className="text-sm text-red-500 mt-2">{errors.title.message}</p>
+        )}
+        <textarea
+          {...props}
+          {...register('content')}
+          className="w-full mt-5 px-3 py-2 text-gray-500 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder={t('add_task_content_placeholder')}
+        />
+        {errors.content && (
+          <p className="text-sm text-red-500 mt-2">{errors.content.message}</p>
+        )}
+        <input
+          {...props}
+          {...register('deadline')}
+          defaultValue={new Date().toISOString().split('T')[0]}
+          className="w-full mt-5 px-3 py-2 text-gray-500 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          type="date"
+        />
+        {errors.deadline && (
+          <p className="text-sm text-red-500 mt-2">{errors.deadline.message}</p>
+        )}
+        <Button className="px-4 mt-5 py-2 cursor-pointer bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
           {t('add_task_button')}
         </Button>
       </div>

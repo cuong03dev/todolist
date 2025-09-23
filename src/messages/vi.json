@@ -53,7 +53,8 @@
     "delete_button": "Xóa",
     "update_button": "Sửa",
     "errors": {
-      "required": "Công việc không được để trống"
+      "required": "Công việc không được để trống",
+      "content_required": "Nội dung công việc không được để trống"
     }
   }
 }

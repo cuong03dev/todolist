@@ -14,7 +14,7 @@ export default function Todo() {
   }, [dispatch])
 
   return (
-    <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg">
+    <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-lg">
       <TodoInput />
       <Tasks tasks={tasks} />
     </div>

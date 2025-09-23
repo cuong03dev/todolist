@@ -4,7 +4,7 @@ export const todoSchema = (t: (key: string) => string) =>
   yup
     .object({
       title: yup.string().required(t('errors.required')).trim(),
-      content: yup.string().notRequired().nullable(),
+      content: yup.string().required(t('errors.content_required')).trim(),
       deadline: yup.string().notRequired().nullable(),
       is_finished: yup.boolean().notRequired(),
     })

@@ -17,7 +17,7 @@ export const addTodo = createAsyncThunk(
     const res = await todoService.addTask({
       title: data?.title,
       content: data?.content ?? '',
-      deadline: '2025-09-09',
+      deadline: data?.deadline,
       is_finished: data?.is_finished ?? false,
     })
     return res
