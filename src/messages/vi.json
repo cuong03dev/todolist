@@ -1,4 +1,18 @@
 {
+  "System": {
+    "errors": {
+      "bad_request": "Yêu cầu không hợp lệ",
+      "unauthorized": "Vui lòng đăng nhập để tiếp tục",
+      "session_expired": "Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại",
+      "forbidden": "Bạn không có quyền truy cập",
+      "not_found": "Không tìm thấy tài nguyên",
+      "conflict": "Dữ liệu bị xung đột",
+      "invalid_data": "Dữ liệu không hợp lệ",
+      "server_error": "Lỗi hệ thống, vui lòng thử lại sau",
+      "network_error": "Lỗi kết nối mạng. Vui lòng thử lại sau",
+      "unknown_error": "Có lỗi xảy ra, vui lòng thử lại"
+    }
+  },
   "Login": {
     "title": "Đăng nhập vào tài khoản",
     "button": "Đăng nhập",

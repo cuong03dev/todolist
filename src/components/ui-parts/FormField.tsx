@@ -12,7 +12,6 @@ interface FormFieldProps {
   inputClass?: string
   labelClass?: string
   errorLog?: string
-  isAuthInput?: boolean
 }
 
 export default function FormField({
@@ -25,14 +24,8 @@ export default function FormField({
   inputClass,
   labelClass,
   required,
-  isAuthInput,
   ...props
 }: FormFieldProps) {
-  if (isAuthInput) {
-    labelClass = 'block text-sm font-medium text-gray-700'
-    inputClass =
-      'appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm'
-  }
   return (
     <div>
       <Label className={labelClass} htmlFor={name} text={label}></Label>

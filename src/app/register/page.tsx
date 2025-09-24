@@ -10,7 +10,13 @@ import { routes } from '@/config/routes'
 import { authService } from '@/services/auth'
 import { toast } from 'sonner'
 import { RegisterFormValues, registerSchema } from '@/schemas/auth.schema'
-
+const FORM_STYLES = {
+  labelClass: 'block text-sm font-medium text-gray-700',
+  inputClass:
+    'appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm',
+  buttonClass:
+    'cursor-pointer group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500',
+}
 export default function RegisterPage() {
   const t = useTranslations('Register')
 
@@ -28,10 +34,7 @@ export default function RegisterPage() {
         password: data.password,
       })
       toast.success(t('notify.register_success'))
-    } catch (error: any) {
-      const message = error?.response?.data?.message
-
-      toast.error(message || t('notify.register_error'))
+    } catch (_) {
     }
   }
   return (
@@ -60,7 +63,8 @@ export default function RegisterPage() {
               errorLog={errors.email?.message}
               autoComplete="email"
               placeholder={t('email_placeholder')}
-              isAuthInput
+              labelClass={FORM_STYLES.labelClass}
+              inputClass={FORM_STYLES.inputClass}
             />
 
             <FormField
@@ -71,7 +75,8 @@ export default function RegisterPage() {
               errorLog={errors.password?.message}
               autoComplete="current-password"
               placeholder={t('password_placeholder')}
-              isAuthInput
+              labelClass={FORM_STYLES.labelClass}
+              inputClass={FORM_STYLES.inputClass}
             />
             <FormField
               label={t('confirm_password_label')}
@@ -81,7 +86,8 @@ export default function RegisterPage() {
               errorLog={errors.confirm_password?.message}
               autoComplete="current-password"
               placeholder={t('confirm_password_placeholder')}
-              isAuthInput
+              labelClass={FORM_STYLES.labelClass}
+              inputClass={FORM_STYLES.inputClass}
             />
             <Button
               type="submit"

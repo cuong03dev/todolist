@@ -12,7 +12,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/todo', request.url))
   }
 
-  if (!token && pathname.startsWith('/dashboard')) {
+  if (!token && pathname.startsWith('/todo')) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
@@ -20,5 +20,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/login', '/register', '/dashboard/:path*'],
+  matcher: ['/login', '/register', '/todo'],
 }

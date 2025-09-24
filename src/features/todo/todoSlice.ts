@@ -65,7 +65,6 @@ export const todoSlice = createSlice({
   initialState,
   reducers: {
     setEditingValue: (state, action) => {
-      console.log('action.payload', action.payload)
       state.editingValue = action.payload
     },
   },
@@ -82,8 +81,6 @@ export const todoSlice = createSlice({
       )
     })
     builder.addCase(editTodo.fulfilled, (state, action) => {
-      console.log('action.payload', action.payload)
-
       state.value = state.value.map((todo: any) =>
         todo._id === action.payload._id ? action.payload : todo,
       )

@@ -7,10 +7,19 @@ import { useForm } from 'react-hook-form'
 import Link from 'next/link'
 import { routes } from '@/config/routes'
 import { LoginFormValues, loginSchema } from '@/schemas/auth.schema'
+import { useRouter } from 'next/navigation'
+import { http } from '@/lib/axios'
 import { toast } from 'sonner'
+
+const FORM_STYLES = {
+  labelClass: 'block text-sm font-medium text-gray-700',
+  inputClass:
+    'appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm',
+}
 
 export default function LoginPage() {
   const t = useTranslations('Login')
+  const router = useRouter()
   const {
     register,
     handleSubmit,
@@ -20,23 +29,25 @@ export default function LoginPage() {
   })
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      const res = await fetch('/api/auth/login', {
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           username: data.email,
           password: data.password,
         }),
-      })
-
-      if (!res.ok) {
-        throw new Error('Login failed')
+      });
+      
+      if (!response.ok) {
+        await http.get('/login');
+        return;
       }
-
+      
       toast.success(t('notify.login_success'))
-      window.location.href = '/todo'
-    } catch (error: any) {
-      toast.error(error.message || t('notify.login_error'))
+      router.push(routes.todo)
+    } catch {
     }
   }
 
@@ -66,8 +77,9 @@ export default function LoginPage() {
               errorLog={errors.email?.message}
               autoComplete="email"
               placeholder={t('email_placeholder')}
-              isAuthInput
               required
+              labelClass={FORM_STYLES.labelClass}
+              inputClass={FORM_STYLES.inputClass}
             />
 
             <FormField
@@ -78,8 +90,9 @@ export default function LoginPage() {
               errorLog={errors.password?.message}
               autoComplete="current-password"
               placeholder={t('password_placeholder')}
-              isAuthInput
               required
+              labelClass={FORM_STYLES.labelClass}
+              inputClass={FORM_STYLES.inputClass}
             />
             <Button
               type="submit"

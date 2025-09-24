@@ -24,6 +24,24 @@ export default function TaskItem({ task, isFinished }: Props) {
     setIsOpen(!isOpen)
   }
 
+  const handleToggleTask = (task: any) => {
+    dispatch(
+      editTodo({
+        _id: task._id,
+        title: task.title,
+        content: task.content,
+        deadline: task.deadline,
+        is_finished: !task.is_finished,
+      }),
+    )
+    toast.success(t('notify.status_change_success'))
+  }
+
+  const handleEdit = (values: any) => {
+    dispatch(editTodo({ ...task, ...values }))
+    toast.success(t('notify.edit_success'))
+    handleClose()
+  }
   return (
     <div
       className={`justify-between cursor-pointer p-4 group hover:bg-gray-50 rounded-2xl border border-gray-300 ${isFinished && 'opacity-50'}`}
@@ -36,16 +54,7 @@ export default function TaskItem({ task, isFinished }: Props) {
               checked={!!task.is_finished}
               onClick={(e) => e.stopPropagation()}
               onChange={() => {
-                dispatch(
-                  editTodo({
-                    _id: task._id,
-                    title: task.title,
-                    content: task.content,
-                    deadline: task.deadline,
-                    is_finished: !task.is_finished,
-                  }),
-                )
-                toast.success(t('notify.status_change_success'))
+                handleToggleTask(task)
               }}
               className="peer hidden"
             />
@@ -83,9 +92,7 @@ export default function TaskItem({ task, isFinished }: Props) {
             t={t}
             defaultValues={task}
             onSubmit={(values) => {
-              dispatch(editTodo({ ...task, ...values }))
-              toast.success(t('notify.edit_success'))
-              handleClose()
+              handleEdit(values)
             }}
             onClose={handleClose}
             onDelete={() => {
