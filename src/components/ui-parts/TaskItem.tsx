@@ -6,6 +6,7 @@ import { useAppDispatch } from '@/store/hooks'
 import { toast } from 'sonner'
 import Modal from './Modal'
 import TodoInput from './TodoInput'
+import { convertTime } from '@/utils/convertTime'
 
 interface Props {
   task?: any
@@ -76,7 +77,7 @@ export default function TaskItem({ task, isFinished }: Props) {
             <div
               className={`text-gray-600 font-medium text-[14px] ${isFinished && 'line-through'}`}
             >
-              {task.deadline}
+              {convertTime(task.deadline)}
             </div>
           </div>
         </div>

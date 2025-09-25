@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { FilterIcon } from '../ui/Icon'
 import FormField from './FormField'
+import { convertTime } from '@/utils/convertTime'
 
 type Props = {
   onFilterChange: (
@@ -56,7 +57,7 @@ export default function Filter({ onFilterChange }: Props) {
 
   const getButtonText = () => {
     if (isFilterApplied && dateFrom && dateTo) {
-      return `${dateFrom} - ${dateTo}`
+      return `${convertTime(dateFrom)} - ${convertTime(dateTo)}`
     }
     return t('filterByDate')
   }
