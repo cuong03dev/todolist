@@ -53,11 +53,13 @@ export const deleteTodo = createAsyncThunk(
 interface TodoState {
   value: any[]
   editingValue: any | null
+  initialLoading: boolean
 }
 
 const initialState: TodoState = {
   value: [],
   editingValue: null,
+  initialLoading: true,
 }
 
 export const todoSlice = createSlice({
@@ -72,8 +74,13 @@ export const todoSlice = createSlice({
     builder.addCase(addTodo.fulfilled, (state, action) => {
       state.value.push(action.payload)
     })
+    builder.addCase(getAll.pending, (state, action) => {
+      state.initialLoading = true
+    })
+
     builder.addCase(getAll.fulfilled, (state, action) => {
       state.value = action.payload
+      state.initialLoading = false
     })
     builder.addCase(deleteTodo.fulfilled, (state, action) => {
       state.value = state.value.filter(

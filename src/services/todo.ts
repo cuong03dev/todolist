@@ -1,8 +1,5 @@
 import { http } from '@/lib/axios'
-type LoginPayload = {
-  username: string
-  password: string
-}
+
 export const todoService = {
   getAlls: () => http.get('todo'),
   addTask: (payload: {

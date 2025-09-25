@@ -1,11 +1,13 @@
 'use client'
 import Empty from '@/components/ui-parts/Empty'
+import Loading from '@/components/ui-parts/Loading'
 import Modal from '@/components/ui-parts/Modal'
 import Tasks from '@/components/ui-parts/Tasks'
 import TodoInput from '@/components/ui-parts/TodoInput'
 import Button from '@/components/ui/Button'
 import { EmptyIcon } from '@/components/ui/Icon'
 import { addTodo, getAll } from '@/features/todo/todoSlice'
+import { TodoFormValues } from '@/schemas/todo.schema'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
@@ -14,6 +16,7 @@ import { toast } from 'sonner'
 export default function Todo() {
   const dispatch = useAppDispatch()
   const tasks = useAppSelector((state) => state.todo.value)
+  const initialLoading = useAppSelector((state) => state.todo.initialLoading)
   const t = useTranslations('Todo')
   const [isOpen, setIsOpen] = useState(false)
   useEffect(() => {
@@ -22,6 +25,11 @@ export default function Todo() {
 
   const handleClose = () => {
     setIsOpen(!isOpen)
+  }
+  const handleAdd = (values: TodoFormValues) => {
+    dispatch(addTodo(values))
+    handleClose()
+    toast.success(t('notify.created_success'))
   }
   return (
     <div className="max-w-3xl flex mx-auto mt-10 bg-white  shadow-lg ">
@@ -35,11 +43,7 @@ export default function Todo() {
             <TodoInput
               mode="add"
               t={t}
-              onSubmit={(values) => {
-                dispatch(addTodo(values))
-                handleClose()
-                toast.success(t('notify.created_success'))
-              }}
+              onSubmit={(values) => handleAdd(values)}
               onClose={handleClose}
             />
           </Modal>
@@ -53,20 +57,27 @@ export default function Todo() {
               {t('add_task_button')}
             </Button>
           </div>
-          {tasks.filter((task) => !task.is_finished).length === 0 && (
-            <Empty
-              icon={<EmptyIcon className="w-10 h-10" />}
-              title={t('empty')}
-            />
-          )}
+          {initialLoading && <Loading />}
           <Tasks tasks={tasks.filter((task) => !task.is_finished)} />
+          {!initialLoading &&
+            tasks.filter((task) => !task.is_finished).length === 0 && (
+              <Empty
+                icon={<EmptyIcon className="w-10 h-10" />}
+                title={t('empty')}
+              />
+            )}
         </div>
         <div className="mt-10">
           {tasks.filter((task) => task.is_finished).length > 0 && (
             <div className="font-bold py-3 text-[20px]">Completed</div>
           )}
-
-          <Tasks isFinished tasks={tasks.filter((task) => task.is_finished)} />
+          {initialLoading && <Loading />}
+          {!initialLoading && (
+            <Tasks
+              isFinished
+              tasks={tasks.filter((task) => task.is_finished)}
+            />
+          )}
         </div>
       </div>
     </div>
