@@ -1,7 +1,8 @@
+import { localeConfig } from '@/config/locale'
 import { getRequestConfig } from 'next-intl/server'
 
 export default getRequestConfig(async () => {
-  const locale = 'vi'
+  const locale = localeConfig.locale
 
   return {
     locale,
