@@ -11,3 +11,12 @@ export const todoSchema = (t: (key: string) => string) =>
     .required()
 
 export type TodoFormValues = yup.InferType<ReturnType<typeof todoSchema>>
+
+export const searchSchema = (t: (key: string) => string) =>
+  yup
+    .object({
+      title: yup.string().required().trim(),
+    })
+    .required()
+
+export type SearchFormValues = yup.InferType<ReturnType<typeof searchSchema>>

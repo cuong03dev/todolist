@@ -78,5 +78,25 @@
       "delete_success": "Xóa công việc thành công!",
       "status_change_success": "Cập nhật trạng thái công việc thành công!"
     }
+  },
+  "Search": {
+    "placeholder": "Tìm kiếm công việc",
+    "button": "Tìm kiếm",
+    "errors": {
+      "required": "Tên công việc không được để trống"
+    }
+  },
+  "Filter": {
+    "all": "Tất cả",
+    "today": "Hôm nay",
+    "tomorrow": "Ngày mai",
+    "this_week": "Tuần này",
+    "this_month": "Tháng này",
+    "overdue": "Quá hạn",
+    "filterByDate": "Lọc theo ngày",
+    "dateFrom": "Từ ngày",
+    "dateTo": "Đến ngày",
+    "apply": "Áp dụng",
+    "clear": "Xóa bộ lọc"
   }
 }
