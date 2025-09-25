@@ -70,6 +70,9 @@ export default function Todo() {
       setIsFiltered(false)
     }
   }
+  const handleSearch = (value: string) => {
+    setFilteredTasks(tasks.filter((task) => task.title.includes(value)))
+  }
   return (
     <>
       <div className="max-w-3xl  mx-auto mt-10 bg-white shadow-lg pb-6">
@@ -99,7 +102,7 @@ export default function Todo() {
             </div>
 
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
-              <SearchBar onSearch={() => {}} />
+              <SearchBar onSearch={handleSearch} />
             </div>
             <Filter onFilterChange={handlleFilter} />
 

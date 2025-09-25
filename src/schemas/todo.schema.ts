@@ -15,7 +15,7 @@ export type TodoFormValues = yup.InferType<ReturnType<typeof todoSchema>>
 export const searchSchema = (t: (key: string) => string) =>
   yup
     .object({
-      title: yup.string().required().trim(),
+      title: yup.string(),
     })
     .required()
 
