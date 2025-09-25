@@ -1,9 +1,10 @@
 import { todoService } from '@/services/todo'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
-export const getAll = createAsyncThunk('todo/getAll', async () => {
-  const res = await todoService.getAlls()
-  return res.data
+export const getAll = createAsyncThunk('todo/getAll', async (page?: number) => {
+  const res = await todoService.getAlls(page)
+
+  return res
 })
 
 export const addTodo = createAsyncThunk(
@@ -54,12 +55,16 @@ interface TodoState {
   value: any[]
   editingValue: any | null
   initialLoading: boolean
+  totalPages: number
+  currentPage: number
 }
 
 const initialState: TodoState = {
   value: [],
   editingValue: null,
   initialLoading: true,
+  totalPages: 0,
+  currentPage: 1,
 }
 
 export const todoSlice = createSlice({
@@ -68,6 +73,12 @@ export const todoSlice = createSlice({
   reducers: {
     setEditingValue: (state, action) => {
       state.editingValue = action.payload
+    },
+    setTotalPages: (state, action) => {
+      state.totalPages = action.payload
+    },
+    setCurrentPage: (state, action) => {
+      state.currentPage = action.payload
     },
   },
   extraReducers: (builder) => {
@@ -79,7 +90,8 @@ export const todoSlice = createSlice({
     })
 
     builder.addCase(getAll.fulfilled, (state, action) => {
-      state.value = action.payload
+      state.value = action.payload.data
+      state.totalPages = Math.ceil(action.payload.count / 10)
       state.initialLoading = false
     })
     builder.addCase(deleteTodo.fulfilled, (state, action) => {
@@ -95,6 +107,7 @@ export const todoSlice = createSlice({
   },
 })
 
-export const { setEditingValue } = todoSlice.actions
+export const { setEditingValue, setTotalPages, setCurrentPage } =
+  todoSlice.actions
 
 export default todoSlice.reducer

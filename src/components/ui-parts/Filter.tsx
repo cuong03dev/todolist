@@ -73,7 +73,7 @@ export default function Filter({ onFilterChange }: Props) {
           onClick={handleOpen}
         >
           {getButtonText()}
-          <FilterIcon className="w-5 h-5" />
+          <FilterIcon className="mr-1 h-5 w-5 text-gray-400" />
         </button>
       </div>
 

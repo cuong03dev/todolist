@@ -22,7 +22,14 @@ export default function Todo() {
   const initialLoading = useAppSelector((state) => state.todo.initialLoading)
   const t = useTranslations('Todo')
   const [isOpen, setIsOpen] = useState(false)
-  const [filteredTasks, setFilteredTasks] = useState([])
+  interface Todo {
+    _id: string
+    title: string
+    content: string
+    deadline?: string
+    is_finished: boolean
+  }
+  const [filteredTasks, setFilteredTasks] = useState<Todo[]>([])
   const [isFiltered, setIsFiltered] = useState(false)
 
   useEffect(() => {
@@ -52,8 +59,8 @@ export default function Todo() {
   }
   const handlleFilter = (
     filterType: string,
-    dateFrom: string,
-    dateTo: string,
+    dateFrom?: string,
+    dateTo?: string,
   ) => {
     if (dateFrom && dateTo) {
       const filtered = tasks.filter((task) => {
@@ -71,7 +78,15 @@ export default function Todo() {
     }
   }
   const handleSearch = (value: string) => {
-    setFilteredTasks(tasks.filter((task) => task.title.includes(value)))
+    setFilteredTasks(
+      tasks.filter((task) =>
+        task.title.toLowerCase().includes(value.toLowerCase()),
+      ),
+    )
+  }
+
+  const handlePageChange = (page: number) => {
+    dispatch(getAll(page))
   }
   return (
     <>
@@ -131,7 +146,7 @@ export default function Todo() {
           </div>
         </div>
         <div className="mt-5 flex justify-center">
-          <Pagination />
+          <Pagination onPageChange={handlePageChange} />
         </div>
       </div>
     </>

@@ -1,7 +1,7 @@
 import { http } from '@/lib/axios'
 
 export const todoService = {
-  getAlls: () => http.get('todo'),
+  getAlls: (page: number) => http.get('todo', { params: { page } }),
   addTask: (payload: {
     title: string
     content: string
