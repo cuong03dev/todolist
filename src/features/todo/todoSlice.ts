@@ -2,10 +2,14 @@ import { todoService } from '@/services/todo'
 import type { Todo } from '@/types/todo.types'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
+interface TodoResponse {
+  data: Todo[]
+  count: number
+}
+
 export const getAll = createAsyncThunk('todo/getAll', async (page?: number) => {
   const res = await todoService.getAlls(page ?? 1)
-
-  return res
+  return res as unknown as TodoResponse
 })
 
 export const addTodo = createAsyncThunk(

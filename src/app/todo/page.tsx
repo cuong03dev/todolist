@@ -18,6 +18,8 @@ import { useTranslations } from 'next-intl'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 
+import { Suspense } from 'react'
+
 export default function Todo() {
   const dispatch = useAppDispatch()
   const {
@@ -107,7 +109,7 @@ export default function Todo() {
   })
 
   return (
-    <>
+    <Suspense fallback={<Loading />}>
       <div className="max-w-3xl mx-auto mt-10 bg-white shadow-lg">
         <div className="border border-gray-300 p-6 rounded-lg w-full">
           <div>
@@ -168,6 +170,6 @@ export default function Todo() {
           </div>
         )}
       </div>
-    </>
+    </Suspense>
   )
 }
