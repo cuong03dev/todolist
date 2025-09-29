@@ -3,54 +3,41 @@ import FormField from '@/components/ui-parts/FormField'
 import Button from '@/components/ui/Button'
 import { useTranslations } from 'next-intl'
 import { yupResolver } from '@hookform/resolvers/yup'
+import * as yup from 'yup'
 import { useForm } from 'react-hook-form'
 import Link from 'next/link'
 import { routes } from '@/config/routes'
-import { LoginFormValues, loginSchema } from '@/schemas/auth.schema'
-import { useRouter } from 'next/navigation'
-// import { http } from '@/lib/axios'
+import { authService } from '@/services/auth'
 import { toast } from 'sonner'
-
+import { RegisterFormValues, registerSchema } from '@/schemas/auth.schema'
+import { useRouter } from 'next/navigation'
 const FORM_STYLES = {
   labelClass: 'block text-sm font-medium text-gray-700',
   inputClass:
     'appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm',
+  buttonClass:
+    'cursor-pointer group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500',
 }
-
-export default function LoginPage() {
-  const t = useTranslations('Login')
+export default function RegisterPage() {
+  const t = useTranslations('Register')
   const router = useRouter()
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormValues>({
-    resolver: yupResolver(loginSchema(t)),
+  } = useForm<RegisterFormValues>({
+    resolver: yupResolver(registerSchema(t)),
   })
-  const onSubmit = async (data: LoginFormValues) => {
+  const onSubmit = async (data: RegisterFormValues) => {
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: data.email,
-          password: data.password,
-        }),
+      await authService.register({
+        username: data.email,
+        password: data.password,
       })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        toast.error(errorData.message)
-        return
-      }
-
-      toast.success(t('notify.login_success'))
-      router.push(routes.todo)
-    } catch {}
+      toast.success(t('notify.register_success'))
+      router.push(routes.login)
+    } catch (_) {}
   }
-
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -60,10 +47,10 @@ export default function LoginPage() {
         <p className="mt-2 text-center text-sm text-gray-600 max-w">
           {t('Or')} <br></br>
           <Link
-            href={routes.register}
+            href={routes.login}
             className="font-medium text-blue-600 hover:text-blue-500"
           >
-            {t('create_account')}
+            {t('login')}
           </Link>
         </p>
       </div>
@@ -77,7 +64,6 @@ export default function LoginPage() {
               errorLog={errors.email?.message}
               autoComplete="email"
               placeholder={t('email_placeholder')}
-              required
               labelClass={FORM_STYLES.labelClass}
               inputClass={FORM_STYLES.inputClass}
             />
@@ -90,7 +76,17 @@ export default function LoginPage() {
               errorLog={errors.password?.message}
               autoComplete="current-password"
               placeholder={t('password_placeholder')}
-              required
+              labelClass={FORM_STYLES.labelClass}
+              inputClass={FORM_STYLES.inputClass}
+            />
+            <FormField
+              label={t('confirm_password_label')}
+              id="confirm_password"
+              {...register('confirm_password')}
+              type="password"
+              errorLog={errors.confirm_password?.message}
+              autoComplete="current-password"
+              placeholder={t('confirm_password_placeholder')}
               labelClass={FORM_STYLES.labelClass}
               inputClass={FORM_STYLES.inputClass}
             />

@@ -1,15 +1,21 @@
+'use client'
 import { NextIntlClientProvider } from 'next-intl'
-import viMessages from './messages/vi.json'
 import { Toaster } from 'sonner'
+import { Provider as ReduxProvider } from 'react-redux'
+import { store } from './store'
+import { getMessages } from './utils/messages'
+import { getLocale } from './utils/locale'
 export default function Provider({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const messages = getMessages()
+  const locale = getLocale()
   return (
-    <NextIntlClientProvider messages={viMessages}>
+    <NextIntlClientProvider messages={messages} locale={locale}>
       <Toaster richColors />
-      {children}
+      <ReduxProvider store={store}>{children}</ReduxProvider>
     </NextIntlClientProvider>
   )
 }
