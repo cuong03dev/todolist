@@ -75,12 +75,6 @@ export const todoSlice = createSlice({
     setEditingValue: (state, action) => {
       state.editingValue = action.payload
     },
-    setTotalPages: (state, action) => {
-      state.totalPages = action.payload
-    },
-    setCurrentPage: (state, action) => {
-      state.currentPage = action.payload
-    },
   },
   extraReducers: (builder) => {
     builder.addCase(addTodo.fulfilled, (state, action) => {
@@ -108,7 +102,6 @@ export const todoSlice = createSlice({
   },
 })
 
-export const { setEditingValue, setTotalPages, setCurrentPage } =
-  todoSlice.actions
+export const { setEditingValue } = todoSlice.actions
 
 export default todoSlice.reducer

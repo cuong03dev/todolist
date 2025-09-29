@@ -10,6 +10,7 @@ import TodoInput from '@/components/ui-parts/TodoInput'
 import Button from '@/components/ui/Button'
 import { EmptyIcon } from '@/components/ui/Icon'
 import { addTodo, getAll } from '@/features/todo/todoSlice'
+import { usePagination } from '@/hooks/usePagination'
 import { TodoFormValues } from '@/schemas/todo.schema'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import type { Todo } from '@/types/todo.types'
@@ -19,8 +20,12 @@ import { toast } from 'sonner'
 
 export default function Todo() {
   const dispatch = useAppDispatch()
-  const tasks = useAppSelector((state) => state.todo.value)
-  const initialLoading = useAppSelector((state) => state.todo.initialLoading)
+  const {
+    value: tasks,
+    initialLoading,
+    totalPages,
+  } = useAppSelector((state) => state.todo)
+
   const t = useTranslations('Todo')
   const [isOpen, setIsOpen] = useState(false)
 
@@ -53,9 +58,7 @@ export default function Todo() {
   const isEmpty = !initialLoading && pendingTasks.length === 0
   const hasCompletedTasks = completedTasks.length > 0
 
-  const handleClose = () => {
-    setIsOpen(!isOpen)
-  }
+  const handleClose = () => setIsOpen(!isOpen)
 
   const handleAdd = async (values: TodoFormValues) => {
     await dispatch(
@@ -99,9 +102,9 @@ export default function Todo() {
     )
   }
 
-  const handlePageChange = async (page: number) => {
-    await dispatch(getAll(page))
-  }
+  const { currentPage, handlePageClick, isPageLoading } = usePagination({
+    totalPages,
+  })
 
   return (
     <>
@@ -136,9 +139,9 @@ export default function Todo() {
             </div>
             <Filter onFilterChange={handleFilter} />
 
-            {initialLoading && <Loading />}
-            <Tasks tasks={pendingTasks} />
-            {isEmpty && (
+            {(initialLoading || isPageLoading) && <Loading />}
+            {!isPageLoading && <Tasks tasks={pendingTasks} />}
+            {isEmpty && !isPageLoading && (
               <Empty
                 icon={<EmptyIcon className="w-10 h-10" />}
                 title={t('empty')}
@@ -149,12 +152,18 @@ export default function Todo() {
             {hasCompletedTasks && (
               <div className="font-bold py-3 text-[20px]">Completed</div>
             )}
-            {initialLoading && <Loading />}
-            {!initialLoading && <Tasks isFinished tasks={completedTasks} />}
+            {(initialLoading || isPageLoading) && <Loading />}
+            {!initialLoading && !isPageLoading && (
+              <Tasks isFinished tasks={completedTasks} />
+            )}
           </div>
         </div>
         <div className="mt-5 flex justify-center">
-          <Pagination onPageChange={handlePageChange} />
+          <Pagination
+            onClick={handlePageClick}
+            currentPage={currentPage}
+            totalPages={totalPages}
+          />
         </div>
       </div>
     </>
