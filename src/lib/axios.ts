@@ -50,7 +50,7 @@ const handleTokenRefresh = async (error) => {
   }
 }
 
-const getErrorMessage = (status: number, data: any) => {
+const getErrorMessage = (status: number, data: { message?: string }) => {
   switch (status) {
     case 400:
       return data?.message || messages.System.errors.bad_request

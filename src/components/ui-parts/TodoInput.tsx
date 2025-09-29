@@ -8,7 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 
 interface Props {
   onClose: () => void
-  t: any
+  t: (key: string) => string
   onSubmit?: (data: TodoFormValues) => void
   defaultValues?: Partial<TodoFormValues>
   mode?: 'add' | 'edit'
