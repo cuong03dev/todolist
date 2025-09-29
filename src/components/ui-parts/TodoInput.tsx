@@ -22,7 +22,6 @@ export default function TodoInput({
   defaultValues,
   mode,
   onDelete,
-  onEdit,
   ...props
 }: Props) {
   const {

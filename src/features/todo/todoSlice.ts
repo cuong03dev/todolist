@@ -84,7 +84,7 @@ export const todoSlice = createSlice({
     builder.addCase(addTodo.fulfilled, (state, action) => {
       state.value.push(action.payload as unknown as Todo)
     })
-    builder.addCase(getAll.pending, (state, action) => {
+    builder.addCase(getAll.pending, (state) => {
       state.initialLoading = true
     })
 

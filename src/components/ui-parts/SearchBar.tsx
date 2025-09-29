@@ -13,7 +13,7 @@ type Props = {
 export default function SearchBar({ onSearch }: Props) {
   const t = useTranslations('Search')
   const { register, handleSubmit } = useForm<SearchFormValues>({
-    resolver: yupResolver(searchSchema(t)),
+    resolver: yupResolver(searchSchema()),
   })
 
   const handleSearch = (data: SearchFormValues) => {
