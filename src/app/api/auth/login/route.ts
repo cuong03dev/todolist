@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers'
-
+import { NextResponse } from 'next/server'
 export async function POST(req: Request) {
   const body = await req.json()
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/'
@@ -32,21 +32,20 @@ export async function POST(req: Request) {
   }
 
   const { accessToken, refreshToken } = await res.json()
-
-  const cookieStore = cookies()
-  cookieStore.set('accessToken', accessToken, {
+  const response = NextResponse.json({ accessToken })
+  response.cookies.set('accessToken', accessToken, {
     httpOnly: false,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     path: '/',
     maxAge: 5 * 60,
   })
-  cookieStore.set('refreshToken', refreshToken, {
+  response.cookies.set('refreshToken', refreshToken, {
     httpOnly: false,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     path: '/',
     maxAge: 60 * 60 * 24 * 7,
   })
-  return Response.json({ accessToken })
+  return response
 }
