@@ -25,7 +25,11 @@ export default function Modal({ open, onClose, children, title }: ModalProps) {
         >
           <div className="flex justify-between items-center mb-4">
             <div className="text-[24px] font-bold">{title}</div>
-            <Button className="cursor-pointer" onClick={() => onClose()}>
+            <Button
+              type="button"
+              className="cursor-pointer"
+              onClick={() => onClose()}
+            >
               <CloseIcon className="w-6 h-6 text-gray-600 hover:text-gray-800" />
             </Button>
           </div>

@@ -53,7 +53,7 @@ export default function TaskItem({ task, isFinished }: Props) {
           <label className="flex items-center cursor-pointer">
             <Input
               type="checkbox"
-              checked={!!task?.is_finished}
+              checked={Boolean(task?.is_finished)}
               onClick={(e) => e.stopPropagation()}
               onChange={() => {
                 handleToggleTask(task!)

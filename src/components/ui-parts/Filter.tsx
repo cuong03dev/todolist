@@ -1,8 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef } from 'react'
 import { useTranslations } from 'next-intl'
 import { FilterIcon } from '../ui/Icon'
 import FormField from './FormField'
 import { convertTime } from '@/utils/convertTime'
+import Button from '../ui/Button'
 
 type Props = {
   onFilterChange: (
@@ -14,8 +15,10 @@ type Props = {
 
 export default function Filter({ onFilterChange }: Props) {
   const [isShow, setIsShow] = useState(false)
-  const [dateFrom, setDateFrom] = useState('')
-  const [dateTo, setDateTo] = useState('')
+  const [dateRange, setDateRange] = useState({
+    from: '',
+    to: '',
+  })
   const dateFromRef = useRef<HTMLInputElement>(null)
   const dateToRef = useRef<HTMLInputElement>(null)
   const t = useTranslations('Filter')
@@ -26,25 +29,24 @@ export default function Filter({ onFilterChange }: Props) {
 
   const handleDateFromChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const date = e.target.value
-    setDateFrom(date)
+    setDateRange((prev) => ({ ...prev, from: date }))
   }
 
   const handleDateToChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const date = e.target.value
-    setDateTo(date)
+    setDateRange((prev) => ({ ...prev, to: date }))
   }
 
   const handleApplyFilter = () => {
-    if (dateFrom && dateTo) {
+    if (dateRange.from && dateRange.to) {
       setIsFilterApplied(true)
-      onFilterChange('byDateRange', dateFrom, dateTo)
+      onFilterChange('byDateRange', dateRange.from, dateRange.to)
       setIsShow(false)
     }
   }
 
   const handleClearFilter = () => {
-    setDateFrom('')
-    setDateTo('')
+    setDateRange({ from: '', to: '' })
     setIsFilterApplied(false)
     onFilterChange('all')
     setIsShow(false)
@@ -53,8 +55,8 @@ export default function Filter({ onFilterChange }: Props) {
   const [isFilterApplied, setIsFilterApplied] = useState(false)
 
   const getButtonText = () => {
-    if (isFilterApplied && dateFrom && dateTo) {
-      return `${convertTime(dateFrom)} - ${convertTime(dateTo)}`
+    if (isFilterApplied && dateRange.from && dateRange.to) {
+      return `${convertTime(dateRange.from)} - ${convertTime(dateRange.to)}`
     }
     return t('filterByDate')
   }
@@ -62,7 +64,7 @@ export default function Filter({ onFilterChange }: Props) {
   return (
     <div className="relative inline-block text-left mb-4">
       <div>
-        <button
+        <Button
           type="button"
           className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
           id="filter-button"
@@ -72,7 +74,7 @@ export default function Filter({ onFilterChange }: Props) {
         >
           {getButtonText()}
           <FilterIcon className="mr-1 h-5 w-5 text-gray-400" />
-        </button>
+        </Button>
       </div>
 
       {isShow && (
@@ -87,7 +89,7 @@ export default function Filter({ onFilterChange }: Props) {
               label={t('dateFrom')}
               type="date"
               ref={dateFromRef}
-              value={dateFrom}
+              value={dateRange.from}
               onChange={handleDateFromChange}
               className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
@@ -100,30 +102,32 @@ export default function Filter({ onFilterChange }: Props) {
               label={t('dateTo')}
               type="date"
               ref={dateToRef}
-              value={dateTo}
+              value={dateRange.to}
               onChange={handleDateToChange}
               className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
           </div>
 
           <div className="flex justify-between">
-            <button
+            <Button
+              type="button"
               onClick={handleClearFilter}
               className="text-gray-700 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-md text-sm font-medium"
             >
               {t('clear')}
-            </button>
-            <button
+            </Button>
+            <Button
+              type="button"
               onClick={handleApplyFilter}
-              disabled={!dateFrom || !dateTo}
+              disabled={!dateRange.from || !dateRange.to}
               className={`px-3 py-1.5 rounded-md text-sm font-medium ${
-                dateFrom && dateTo
+                dateRange.from && dateRange.to
                   ? 'bg-blue-600 text-white hover:bg-blue-700'
                   : 'bg-blue-300 text-white cursor-not-allowed'
               }`}
             >
               {t('apply')}
-            </button>
+            </Button>
           </div>
         </div>
       )}
