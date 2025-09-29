@@ -22,9 +22,6 @@ export default function Filter({ onFilterChange }: Props) {
 
   const handleOpen = () => {
     setIsShow(!isShow)
-    if (!isShow && isFilterApplied && dateFrom && dateTo) {
-    } else if (!isShow) {
-    }
   }
 
   const handleDateFromChange = (e: React.ChangeEvent<HTMLInputElement>) => {

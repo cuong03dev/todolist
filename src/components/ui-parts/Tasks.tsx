@@ -1,8 +1,9 @@
 import React from 'react'
 import TaskItem from './TaskItem'
+import { Todo } from '@/types/todo.types'
 
 interface Props {
-  tasks: any[]
+  tasks: Todo[]
   isFinished?: boolean
 }
 

@@ -12,8 +12,9 @@ import { EmptyIcon } from '@/components/ui/Icon'
 import { addTodo, getAll } from '@/features/todo/todoSlice'
 import { TodoFormValues } from '@/schemas/todo.schema'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import type { Todo } from '@/types/todo.types'
 import { useTranslations } from 'next-intl'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 
 export default function Todo() {
@@ -22,18 +23,15 @@ export default function Todo() {
   const initialLoading = useAppSelector((state) => state.todo.initialLoading)
   const t = useTranslations('Todo')
   const [isOpen, setIsOpen] = useState(false)
-  interface Todo {
-    _id: string
-    title: string
-    content: string
-    deadline?: string
-    is_finished: boolean
-  }
+
   const [filteredTasks, setFilteredTasks] = useState<Todo[]>([])
   const [isFiltered, setIsFiltered] = useState(false)
 
   useEffect(() => {
-    dispatch(getAll())
+    const fetchTasks = async () => {
+      await dispatch(getAll())
+    }
+    fetchTasks()
   }, [dispatch])
 
   useEffect(() => {
@@ -42,11 +40,25 @@ export default function Todo() {
     }
   }, [tasks, isFiltered])
 
+  const pendingTasks = useMemo(
+    () => filteredTasks.filter((task) => !task.is_finished),
+    [filteredTasks],
+  )
+
+  const completedTasks = useMemo(
+    () => filteredTasks.filter((task) => task.is_finished),
+    [filteredTasks],
+  )
+
+  const isEmpty = !initialLoading && pendingTasks.length === 0
+  const hasCompletedTasks = completedTasks.length > 0
+
   const handleClose = () => {
     setIsOpen(!isOpen)
   }
-  const handleAdd = (values: TodoFormValues) => {
-    dispatch(
+
+  const handleAdd = async (values: TodoFormValues) => {
+    await dispatch(
       addTodo({
         title: values.title,
         content: values.content,
@@ -57,7 +69,8 @@ export default function Todo() {
     handleClose()
     toast.success(t('notify.created_success'))
   }
-  const handlleFilter = (
+
+  const handleFilter = (
     filterType: string,
     dateFrom?: string,
     dateTo?: string,
@@ -77,6 +90,7 @@ export default function Todo() {
       setIsFiltered(false)
     }
   }
+
   const handleSearch = (value: string) => {
     setFilteredTasks(
       tasks.filter((task) =>
@@ -85,14 +99,15 @@ export default function Todo() {
     )
   }
 
-  const handlePageChange = (page: number) => {
-    dispatch(getAll(page))
+  const handlePageChange = async (page: number) => {
+    await dispatch(getAll(page))
   }
+
   return (
     <>
-      <div className="max-w-3xl  mx-auto mt-10 bg-white shadow-lg pb-6">
+      <div className="max-w-3xl mx-auto mt-10 bg-white shadow-lg pb-6">
         <div className="border border-gray-300 p-6 rounded-lg w-full">
-          <div className=" ">
+          <div>
             <Modal
               title={t('add_task_placeholder')}
               open={isOpen}
@@ -101,7 +116,7 @@ export default function Todo() {
               <TodoInput
                 mode="add"
                 t={t}
-                onSubmit={(values) => handleAdd(values)}
+                onSubmit={handleAdd}
                 onClose={handleClose}
               />
             </Modal>
@@ -119,30 +134,23 @@ export default function Todo() {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
               <SearchBar onSearch={handleSearch} />
             </div>
-            <Filter onFilterChange={handlleFilter} />
+            <Filter onFilterChange={handleFilter} />
 
             {initialLoading && <Loading />}
-            <Tasks tasks={filteredTasks.filter((task) => !task.is_finished)} />
-            {!initialLoading &&
-              filteredTasks.filter((task) => !task.is_finished).length ===
-                0 && (
-                <Empty
-                  icon={<EmptyIcon className="w-10 h-10" />}
-                  title={t('empty')}
-                />
-              )}
+            <Tasks tasks={pendingTasks} />
+            {isEmpty && (
+              <Empty
+                icon={<EmptyIcon className="w-10 h-10" />}
+                title={t('empty')}
+              />
+            )}
           </div>
           <div className="mt-10">
-            {filteredTasks.filter((task) => task.is_finished).length > 0 && (
+            {hasCompletedTasks && (
               <div className="font-bold py-3 text-[20px]">Completed</div>
             )}
             {initialLoading && <Loading />}
-            {!initialLoading && (
-              <Tasks
-                isFinished
-                tasks={filteredTasks.filter((task) => task.is_finished)}
-              />
-            )}
+            {!initialLoading && <Tasks isFinished tasks={completedTasks} />}
           </div>
         </div>
         <div className="mt-5 flex justify-center">

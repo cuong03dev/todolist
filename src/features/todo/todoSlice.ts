@@ -1,8 +1,9 @@
 import { todoService } from '@/services/todo'
+import type { Todo } from '@/types/todo.types'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 export const getAll = createAsyncThunk('todo/getAll', async (page?: number) => {
-  const res = await todoService.getAlls(page)
+  const res = await todoService.getAlls(page ?? 1)
 
   return res
 })
@@ -52,8 +53,8 @@ export const deleteTodo = createAsyncThunk(
   },
 )
 interface TodoState {
-  value: any[]
-  editingValue: any | null
+  value: Todo[]
+  editingValue: Todo | null
   initialLoading: boolean
   totalPages: number
   currentPage: number

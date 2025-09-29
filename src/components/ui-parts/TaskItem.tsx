@@ -7,9 +7,10 @@ import { toast } from 'sonner'
 import Modal from './Modal'
 import TodoInput from './TodoInput'
 import { convertTime } from '@/utils/convertTime'
+import type { Todo } from '@/types/todo.types'
 
 interface Props {
-  task?: any
+  task?: Todo
   isFinished?: boolean
 }
 
@@ -17,16 +18,16 @@ export default function TaskItem({ task, isFinished }: Props) {
   const [isOpen, setIsOpen] = useState(false)
   const t = useTranslations('Todo')
   const dispatch = useAppDispatch()
-  const handleDelete = (id: string) => {
-    dispatch(deleteTodo(id))
+  const handleDelete = async (id: string) => {
+    await dispatch(deleteTodo(id))
     toast.success(t('notify.delete_success'))
   }
   const handleClose = () => {
     setIsOpen(!isOpen)
   }
 
-  const handleToggleTask = (task: any) => {
-    dispatch(
+  const handleToggleTask = async (task: Todo) => {
+    await dispatch(
       editTodo({
         _id: task._id,
         title: task.title,
@@ -38,8 +39,8 @@ export default function TaskItem({ task, isFinished }: Props) {
     toast.success(t('notify.status_change_success'))
   }
 
-  const handleEdit = (values: any) => {
-    dispatch(editTodo({ ...task, ...values }))
+  const handleEdit = async (values: Todo) => {
+    await dispatch(editTodo({ ...task, ...values }))
     toast.success(t('notify.edit_success'))
     handleClose()
   }
@@ -52,10 +53,10 @@ export default function TaskItem({ task, isFinished }: Props) {
           <label className="flex items-center cursor-pointer">
             <Input
               type="checkbox"
-              checked={!!task.is_finished}
+              checked={!!task?.is_finished}
               onClick={(e) => e.stopPropagation()}
               onChange={() => {
-                handleToggleTask(task)
+                handleToggleTask(task!)
               }}
               className="peer hidden"
             />
@@ -72,12 +73,12 @@ export default function TaskItem({ task, isFinished }: Props) {
             <div
               className={`text-gray-900 font-bold text-xl ${isFinished && 'line-through'}`}
             >
-              {task.title}
+              {task?.title}
             </div>
             <div
               className={`text-gray-600 font-medium text-[14px] ${isFinished && 'line-through'}`}
             >
-              {convertTime(task.deadline)}
+              {convertTime(task?.deadline ?? '')}
             </div>
           </div>
         </div>
@@ -93,11 +94,11 @@ export default function TaskItem({ task, isFinished }: Props) {
             t={t}
             defaultValues={task}
             onSubmit={(values) => {
-              handleEdit(values)
+              handleEdit(values as Todo)
             }}
             onClose={handleClose}
             onDelete={() => {
-              handleDelete(task._id)
+              handleDelete(task?._id ?? '')
               handleClose()
             }}
           />

@@ -1,7 +1,9 @@
+import React from 'react'
 import Input from '../ui/Input'
 import Label from '../ui/Label'
 
-interface FormFieldProps {
+interface FormFieldProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'ref'> {
   id: string
   name: string
   label: string
@@ -14,33 +16,43 @@ interface FormFieldProps {
   errorLog?: string
 }
 
-export default function FormField({
-  id,
-  name,
-  label,
-  type,
-  placeholder,
-  autoComplete,
-  inputClass,
-  labelClass,
-  required,
-  ...props
-}: FormFieldProps) {
-  return (
-    <div>
-      <Label className={labelClass} htmlFor={name} text={label}></Label>
-      <div className="mt-1">
-        <Input
-          id={id}
-          name={name}
-          type={type}
-          autoComplete={autoComplete}
-          placeholder={placeholder}
-          className={inputClass}
-          required={required}
-          {...props}
-        />
+const FormField = React.forwardRef<HTMLInputElement, FormFieldProps>(
+  (
+    {
+      id,
+      name,
+      label,
+      type,
+      placeholder,
+      autoComplete,
+      inputClass,
+      labelClass,
+      required,
+      ...props
+    },
+    ref,
+  ) => {
+    return (
+      <div>
+        <Label className={labelClass} htmlFor={name} text={label}></Label>
+        <div className="mt-1">
+          <Input
+            id={id}
+            name={name}
+            type={type}
+            autoComplete={autoComplete}
+            placeholder={placeholder}
+            className={inputClass}
+            required={required}
+            ref={ref}
+            {...props}
+          />
+        </div>
       </div>
-    </div>
-  )
-}
+    )
+  },
+)
+
+FormField.displayName = 'FormField'
+
+export default FormField
