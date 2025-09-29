@@ -2,7 +2,7 @@ import Cookies from 'js-cookie'
 import axios from 'axios'
 import { toast } from 'sonner'
 import { routes } from '@/config/routes'
-import messages from '@/messages/vi.json'
+import messages from '@/messages/vi/common.json'
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/'
 
