@@ -42,7 +42,7 @@ export const editTodo = createAsyncThunk(
       deadline: data?.deadline,
       is_finished: data?.is_finished ?? false,
     })
-    return res
+    return res as unknown as Todo
   },
 )
 export const deleteTodo = createAsyncThunk(
@@ -78,7 +78,7 @@ export const todoSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(addTodo.fulfilled, (state, action) => {
-      state.value.push(action.payload)
+      state.value.push(action.payload as unknown as Todo)
     })
     builder.addCase(getAll.pending, (state, action) => {
       state.initialLoading = true
@@ -91,11 +91,11 @@ export const todoSlice = createSlice({
     })
     builder.addCase(deleteTodo.fulfilled, (state, action) => {
       state.value = state.value.filter(
-        (todo: any) => todo._id !== action.meta.arg,
+        (todo: Todo) => todo._id !== action.meta.arg,
       )
     })
     builder.addCase(editTodo.fulfilled, (state, action) => {
-      state.value = state.value.map((todo: any) =>
+      state.value = state.value.map((todo: Todo) =>
         todo._id === action.payload._id ? action.payload : todo,
       )
     })
