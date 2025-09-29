@@ -18,7 +18,7 @@ export type TodoFormValues = {
   id?: string
 }
 
-export const searchSchema = (t: (key: string) => string) =>
+export const searchSchema = () =>
   yup
     .object({
       title: yup.string().default(''),

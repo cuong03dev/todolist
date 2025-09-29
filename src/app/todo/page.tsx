@@ -18,8 +18,6 @@ import { useTranslations } from 'next-intl'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 
-import { Suspense } from 'react'
-
 export default function Todo() {
   const dispatch = useAppDispatch()
   const {
@@ -109,67 +107,65 @@ export default function Todo() {
   })
 
   return (
-    <Suspense fallback={<Loading />}>
-      <div className="max-w-3xl mx-auto mt-10 bg-white shadow-lg">
-        <div className="border border-gray-300 p-6 rounded-lg w-full">
-          <div>
-            <Modal
-              title={t('add_task_placeholder')}
-              open={isOpen}
+    <div className="max-w-3xl mx-auto mt-10 bg-white shadow-lg">
+      <div className="border border-gray-300 p-6 rounded-lg w-full">
+        <div>
+          <Modal
+            title={t('add_task_placeholder')}
+            open={isOpen}
+            onClose={handleClose}
+          >
+            <TodoInput
+              mode="add"
+              t={t}
+              onSubmit={handleAdd}
               onClose={handleClose}
-            >
-              <TodoInput
-                mode="add"
-                t={t}
-                onSubmit={handleAdd}
-                onClose={handleClose}
-              />
-            </Modal>
-            <div className="flex justify-between items-center mb-4">
-              <div className="text-3xl font-medium">Todo</div>
-              <Button
-                onClick={() => setIsOpen(true)}
-                type="button"
-                className="text-white bg-[#3a3a3c] focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
-              >
-                {t('add_task_button')}
-              </Button>
-            </div>
-
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
-              <SearchBar onSearch={handleSearch} />
-            </div>
-            <Filter onFilterChange={handleFilter} />
-
-            {(initialLoading || isPageLoading) && <Loading />}
-            {!isPageLoading && <Tasks tasks={pendingTasks} />}
-            {isEmpty && !isPageLoading && (
-              <Empty
-                icon={<EmptyIcon className="w-10 h-10" />}
-                title={t('empty')}
-              />
-            )}
-          </div>
-          <div className="mt-10">
-            {hasCompletedTasks && (
-              <div className="font-bold py-3 text-[20px]">Completed</div>
-            )}
-            {(initialLoading || isPageLoading) && <Loading />}
-            {!initialLoading && !isPageLoading && (
-              <Tasks isFinished tasks={completedTasks} />
-            )}
-          </div>
-        </div>
-        {filteredTasks.length > 0 && totalPages > 1 && (
-          <div className="mt-5 flex justify-center pb-6">
-            <Pagination
-              onClick={handlePageClick}
-              currentPage={currentPage}
-              totalPages={totalPages}
             />
+          </Modal>
+          <div className="flex justify-between items-center mb-4">
+            <div className="text-3xl font-medium">Todo</div>
+            <Button
+              onClick={() => setIsOpen(true)}
+              type="button"
+              className="text-white bg-[#3a3a3c] focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+            >
+              {t('add_task_button')}
+            </Button>
           </div>
-        )}
+
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
+            <SearchBar onSearch={handleSearch} />
+          </div>
+          <Filter onFilterChange={handleFilter} />
+
+          {(initialLoading || isPageLoading) && <Loading />}
+          {!isPageLoading && <Tasks tasks={pendingTasks} />}
+          {isEmpty && !isPageLoading && (
+            <Empty
+              icon={<EmptyIcon className="w-10 h-10" />}
+              title={t('empty')}
+            />
+          )}
+        </div>
+        <div className="mt-10">
+          {hasCompletedTasks && (
+            <div className="font-bold py-3 text-[20px]">Completed</div>
+          )}
+          {(initialLoading || isPageLoading) && <Loading />}
+          {!initialLoading && !isPageLoading && (
+            <Tasks isFinished tasks={completedTasks} />
+          )}
+        </div>
       </div>
-    </Suspense>
+      {filteredTasks.length > 0 && totalPages > 1 && (
+        <div className="mt-5 flex justify-center pb-6">
+          <Pagination
+            onClick={handlePageClick}
+            currentPage={currentPage}
+            totalPages={totalPages}
+          />
+        </div>
+      )}
+    </div>
   )
 }
