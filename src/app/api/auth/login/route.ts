@@ -10,10 +10,25 @@ export async function POST(req: Request) {
   })
 
   if (!res.ok) {
-    return Response.json(
-      { message: 'Login failed', error: true },
-      { status: 401 },
-    )
+    try {
+      const errorData = await res.json()
+
+      return Response.json(
+        {
+          message: errorData.message || 'Login failed',
+          error: true,
+        },
+        { status: res.status },
+      )
+    } catch (_) {
+      return Response.json(
+        {
+          message: `Login failed (${res.status}: ${res.statusText})`,
+          error: true,
+        },
+        { status: res.status },
+      )
+    }
   }
 
   const { accessToken, refreshToken } = await res.json()

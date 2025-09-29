@@ -8,7 +8,7 @@ import Link from 'next/link'
 import { routes } from '@/config/routes'
 import { LoginFormValues, loginSchema } from '@/schemas/auth.schema'
 import { useRouter } from 'next/navigation'
-import { http } from '@/lib/axios'
+// import { http } from '@/lib/axios'
 import { toast } from 'sonner'
 
 const FORM_STYLES = {
@@ -38,17 +38,17 @@ export default function LoginPage() {
           username: data.email,
           password: data.password,
         }),
-      });
-      
+      })
+
       if (!response.ok) {
-        await http.get('/login');
-        return;
+        const errorData = await response.json()
+        toast.error(errorData.message)
+        return
       }
-      
+
       toast.success(t('notify.login_success'))
       router.push(routes.todo)
-    } catch {
-    }
+    } catch {}
   }
 
   return (
