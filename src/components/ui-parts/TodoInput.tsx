@@ -36,7 +36,7 @@ export default function TodoInput({
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit((data) => onSubmit?.(data))}
       className="p-4 border-b border-gray-200"
     >
       <div className="">
@@ -83,7 +83,7 @@ export default function TodoInput({
           <div className="flex gap-4 mt-5">
             <Button
               type="button"
-              onClick={onDelete}
+              onClick={() => onDelete && onDelete('')}
               className="text-white bg-red-700 px-4 py-2 rounded-xl text-sm font-medium "
             >
               {t('delete_button')}

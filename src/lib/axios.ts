@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { toast } from 'sonner'
 import { routes } from '@/config/routes'
 import messages from '@/messages/vi/common.json'
@@ -23,7 +23,7 @@ http.interceptors.request.use(
   (error) => Promise.reject(error),
 )
 
-const handleTokenRefresh = async (error) => {
+const handleTokenRefresh = async (error: AxiosError) => {
   const refreshToken = Cookies.get('refreshToken')
   if (refreshToken) {
     try {
@@ -36,8 +36,11 @@ const handleTokenRefresh = async (error) => {
       const newAccessToken = res?.data
       Cookies.set('accessToken', newAccessToken, { expires: 1 / 96 })
 
-      error.config.headers.Authorization = `Bearer ${newAccessToken}`
-      return http.request(error.config)
+      if (error.config) {
+        error.config.headers.Authorization = `Bearer ${newAccessToken}`
+        return http.request(error.config)
+      }
+      return Promise.reject(error)
     } catch {
       Cookies.remove('accessToken')
       Cookies.remove('refreshToken')

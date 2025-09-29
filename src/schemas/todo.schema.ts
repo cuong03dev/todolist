@@ -5,18 +5,26 @@ export const todoSchema = (t: (key: string) => string) =>
     .object({
       title: yup.string().required(t('errors.required')).trim(),
       content: yup.string().required(t('errors.content_required')).trim(),
-      deadline: yup.string().notRequired().nullable(),
-      is_finished: yup.boolean().notRequired(),
+      deadline: yup.string().default(null).nullable(),
+      is_finished: yup.boolean().default(false),
     })
     .required()
 
-export type TodoFormValues = yup.InferType<ReturnType<typeof todoSchema>>
+export type TodoFormValues = {
+  title: string
+  content: string
+  deadline: string | null
+  is_finished: boolean
+  id?: string
+}
 
 export const searchSchema = (t: (key: string) => string) =>
   yup
     .object({
-      title: yup.string(),
+      title: yup.string().default(''),
     })
     .required()
 
-export type SearchFormValues = yup.InferType<ReturnType<typeof searchSchema>>
+export type SearchFormValues = {
+  title: string
+}
