@@ -10,6 +10,7 @@ import { routes } from '@/config/routes'
 import { authService } from '@/services/auth'
 import { toast } from 'sonner'
 import { RegisterFormValues, registerSchema } from '@/schemas/auth.schema'
+import { useRouter } from 'next/navigation'
 const FORM_STYLES = {
   labelClass: 'block text-sm font-medium text-gray-700',
   inputClass:
@@ -19,7 +20,7 @@ const FORM_STYLES = {
 }
 export default function RegisterPage() {
   const t = useTranslations('Register')
-
+  const router = useRouter()
   const {
     register,
     handleSubmit,
@@ -34,8 +35,8 @@ export default function RegisterPage() {
         password: data.password,
       })
       toast.success(t('notify.register_success'))
-    } catch (_) {
-    }
+      router.push(routes.login)
+    } catch (_) {}
   }
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">

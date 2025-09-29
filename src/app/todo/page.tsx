@@ -108,7 +108,7 @@ export default function Todo() {
 
   return (
     <>
-      <div className="max-w-3xl mx-auto mt-10 bg-white shadow-lg pb-6">
+      <div className="max-w-3xl mx-auto mt-10 bg-white shadow-lg">
         <div className="border border-gray-300 p-6 rounded-lg w-full">
           <div>
             <Modal
@@ -158,13 +158,15 @@ export default function Todo() {
             )}
           </div>
         </div>
-        <div className="mt-5 flex justify-center">
-          <Pagination
-            onClick={handlePageClick}
-            currentPage={currentPage}
-            totalPages={totalPages}
-          />
-        </div>
+        {filteredTasks.length > 0 && totalPages > 1 && (
+          <div className="mt-5 flex justify-center pb-6">
+            <Pagination
+              onClick={handlePageClick}
+              currentPage={currentPage}
+              totalPages={totalPages}
+            />
+          </div>
+        )}
       </div>
     </>
   )
