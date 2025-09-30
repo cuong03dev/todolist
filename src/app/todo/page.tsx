@@ -182,7 +182,7 @@ export default function Todo() {
             {hasCompletedTasks && (
               <div className="font-bold py-3 text-[20px]">Completed</div>
             )}
-            {(initialLoading || isPageLoading) && <Loading />}
+
             {!initialLoading && !isPageLoading && (
               <Tasks isFinished tasks={completedTasks} />
             )}

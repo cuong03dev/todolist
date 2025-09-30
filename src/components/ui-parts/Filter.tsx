@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { FilterIcon } from '../ui/Icon'
 import FormField from './FormField'
@@ -21,7 +21,27 @@ export default function Filter({ onFilterChange }: Props) {
   })
   const dateFromRef = useRef<HTMLInputElement>(null)
   const dateToRef = useRef<HTMLInputElement>(null)
+  const filterContainerRef = useRef<HTMLDivElement>(null)
   const t = useTranslations('Filter')
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        filterContainerRef.current &&
+        !filterContainerRef.current.contains(event.target as Node)
+      ) {
+        setIsShow(false)
+      }
+    }
+
+    if (isShow) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isShow])
 
   const handleOpen = () => {
     setIsShow(!isShow)
@@ -62,7 +82,10 @@ export default function Filter({ onFilterChange }: Props) {
   }
 
   return (
-    <div className="relative inline-block text-left mb-4">
+    <div
+      ref={filterContainerRef}
+      className="relative inline-block text-left mb-4"
+    >
       <div>
         <Button
           type="button"
@@ -80,7 +103,7 @@ export default function Filter({ onFilterChange }: Props) {
       {isShow && (
         <div
           id="date-filter-dropdown"
-          className="absolute right-0 z-10 mt-2 w-64 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none p-4"
+          className="absolute right-0 z-10 mt-2 w-64 origin-top-right rounded-md bg-white shadow-lg border border-gray-300 focus:outline-none p-4"
         >
           <div className="mb-4">
             <FormField
