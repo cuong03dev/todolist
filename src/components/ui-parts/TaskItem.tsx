@@ -9,6 +9,7 @@ import TodoInput from './TodoInput'
 import { convertTime } from '@/utils/convertTime'
 import type { Todo } from '@/types/todo.types'
 import Button from '../ui/Button'
+import { BinIcon, EditIcon } from '../ui/Icon'
 
 interface Props {
   task?: Todo
@@ -91,14 +92,14 @@ export default function TaskItem({ task, isFinished }: Props) {
                 type="button"
                 className="text-white bg-red-700 px-4 py-2 rounded-xl text-sm font-medium"
               >
-                {t('delete_button')}
+                <BinIcon className="w-6 h-6" />
               </Button>
               <Button
                 type="button"
                 onClick={() => setIsOpen(true)}
                 className="text-white bg-blue-700 px-4 py-2 rounded-xl text-sm font-medium"
               >
-                {t('edit_button')}
+                <EditIcon className="w-6 h-6" />
               </Button>
             </div>
           </div>

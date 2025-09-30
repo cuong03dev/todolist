@@ -102,6 +102,7 @@ export default function Todo() {
         is_finished: values.is_finished || false,
       }),
     )
+    await dispatch(getAll(currentPage))
     handleClose()
     toast.success(t('notify.created_success'))
   }
