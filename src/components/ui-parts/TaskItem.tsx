@@ -18,14 +18,19 @@ interface Props {
 
 export default function TaskItem({ task, isFinished }: Props) {
   const [isOpen, setIsOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const t = useTranslations('Todo')
   const dispatch = useAppDispatch()
   const handleDelete = async (id: string) => {
     await dispatch(deleteTodo(id))
     toast.success(t('notify.delete_success'))
+    setIsDeleteModalOpen(false)
   }
   const handleClose = () => {
     setIsOpen(!isOpen)
+  }
+  const handleDeleteModalClose = () => {
+    setIsDeleteModalOpen(false)
   }
 
   const handleToggleTask = async (task: Todo) => {
@@ -89,17 +94,17 @@ export default function TaskItem({ task, isFinished }: Props) {
                 <>
                   <Button
                     onClick={() => {
-                      handleDelete(task?._id ?? '')
+                      setIsDeleteModalOpen(true)
                     }}
                     type="button"
-                    className="text-white bg-red-700 px-4 py-2 rounded-xl text-sm font-medium"
+                    className="text-white bg-red-700 px-2 py-2 rounded-xl text-sm font-medium"
                   >
                     <BinIcon className="w-6 h-6" />
                   </Button>
                   <Button
                     type="button"
                     onClick={() => setIsOpen(true)}
-                    className="text-white bg-blue-700 px-4 py-2 rounded-xl text-sm font-medium"
+                    className="text-white bg-blue-700 px-2 py-2 rounded-xl text-sm font-medium"
                   >
                     <EditIcon className="w-6 h-6" />
                   </Button>
@@ -126,6 +131,32 @@ export default function TaskItem({ task, isFinished }: Props) {
           />
         </Modal>
       )}
+
+      <Modal
+        title={t('confirm_delete_title')}
+        open={isDeleteModalOpen}
+        onClose={handleDeleteModalClose}
+      >
+        <div>
+          <p className="text-gray-700 mb-6">{t('confirm_delete_message')}</p>
+          <div className="flex justify-end gap-3">
+            <Button
+              onClick={handleDeleteModalClose}
+              type="button"
+              className="px-4 py-2 text-gray-600 bg-gray-200 rounded-lg hover:bg-gray-300"
+            >
+              {t('cancel')}
+            </Button>
+            <Button
+              onClick={() => handleDelete(task?._id ?? '')}
+              type="button"
+              className="px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700"
+            >
+              {t('delete')}
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   )
 }

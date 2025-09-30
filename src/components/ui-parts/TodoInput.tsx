@@ -79,7 +79,7 @@ export default function TodoInput({
         )}
 
         {mode === 'edit' && (
-          <div className="flex gap-4 mt-5">
+          <div className="flex justify-end gap-4 mt-5">
             <Button
               type="submit"
               className="text-white bg-blue-500 px-4 py-2 rounded-xl text-sm font-medium"

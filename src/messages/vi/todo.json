@@ -11,6 +11,10 @@
     "edit_button": "Sửa",
     "empty": "Danh sách trống",
     "logout": "Đăng xuất",
+    "confirm_delete_title": "Xóa công việc",
+    "confirm_delete_message": "Bạn có chắc chắn muốn xóa công việc này không?",
+    "cancel": "Hủy",
+    "delete": "Xóa",
     "errors": {
       "required": "Công việc không được để trống",
       "content_required": "Nội dung công việc không được để trống"
