@@ -45,13 +45,17 @@ export default function SearchBar({ onSearch }: Props) {
 
   useEffect(() => {
     onSearch(debouncedValue)
-    if (debouncedValue) {
-      router.push(`?search=${debouncedValue}`)
-    } else {
-      router.push('')
-    }
-  }, [debouncedValue, router, onSearch])
 
+    const params = new URLSearchParams(searchParams.toString())
+
+    if (debouncedValue) {
+      params.set('search', debouncedValue)
+    } else {
+      params.delete('search')
+    }
+
+    router.push(`?${params.toString()}`, { scroll: false })
+  }, [debouncedValue, router, onSearch, searchParams])
   return (
     <form className=" mb-5 w-full">
       <label
