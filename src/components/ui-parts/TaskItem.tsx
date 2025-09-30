@@ -8,6 +8,7 @@ import Modal from './Modal'
 import TodoInput from './TodoInput'
 import { convertTime } from '@/utils/convertTime'
 import type { Todo } from '@/types/todo.types'
+import Button from '../ui/Button'
 
 interface Props {
   task?: Todo
@@ -69,16 +70,36 @@ export default function TaskItem({ task, isFinished }: Props) {
             ></span>
           </label>
 
-          <div onClick={() => setIsOpen(true)} className="w-full">
-            <div
-              className={`text-gray-900 font-bold text-xl ${isFinished && 'line-through'}`}
-            >
-              {task?.title}
+          <div className="w-full flex justify-between items-center">
+            <div className="flex-col justify-between items-center">
+              <div
+                className={`text-gray-900 font-bold text-xl ${isFinished && 'line-through'}`}
+              >
+                {task?.title}
+              </div>
+              <div
+                className={`text-gray-600 font-medium text-[14px] ${isFinished && 'line-through'}`}
+              >
+                {convertTime(task?.deadline ?? '')}
+              </div>
             </div>
-            <div
-              className={`text-gray-600 font-medium text-[14px] ${isFinished && 'line-through'}`}
-            >
-              {convertTime(task?.deadline ?? '')}
+            <div className="flex justify-between items-center gap-4">
+              <Button
+                onClick={() => {
+                  handleDelete(task?._id ?? '')
+                }}
+                type="button"
+                className="text-white bg-red-700 px-4 py-2 rounded-xl text-sm font-medium"
+              >
+                {t('delete_button')}
+              </Button>
+              <Button
+                type="button"
+                onClick={() => setIsOpen(true)}
+                className="text-white bg-blue-700 px-4 py-2 rounded-xl text-sm font-medium"
+              >
+                {t('edit_button')}
+              </Button>
             </div>
           </div>
         </div>
@@ -97,10 +118,6 @@ export default function TaskItem({ task, isFinished }: Props) {
               handleEdit(values as Todo)
             }}
             onClose={handleClose}
-            onDelete={() => {
-              handleDelete(task?._id ?? '')
-              handleClose()
-            }}
           />
         </Modal>
       )}

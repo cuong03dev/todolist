@@ -7,6 +7,7 @@
     "add_task_button": "Thêm",
     "delete_button": "Xóa",
     "update_button": "Lưu",
+    "edit_button": "Sửa",
     "empty": "Danh sách trống",
     "errors": {
       "required": "Công việc không được để trống",

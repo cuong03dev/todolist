@@ -81,13 +81,6 @@ export default function TodoInput({
         {mode === 'edit' && (
           <div className="flex gap-4 mt-5">
             <Button
-              type="button"
-              onClick={() => onDelete && onDelete('')}
-              className="text-white bg-red-700 px-4 py-2 rounded-xl text-sm font-medium "
-            >
-              {t('delete_button')}
-            </Button>
-            <Button
               type="submit"
               className="text-white bg-blue-500 px-4 py-2 rounded-xl text-sm font-medium"
             >
