@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { SearchIcon } from '../ui/Icon'
 import Input from '../ui/Input'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 type Props = {
   onSearch: (value: string) => void
@@ -13,9 +14,15 @@ type Props = {
 
 export default function SearchBar({ onSearch }: Props) {
   const t = useTranslations('Search')
-  const [searchValue, setSearchValue] = useState('')
+  const searchParams = useSearchParams()
+  const initialSearchValue = searchParams.get('search') || ''
+  const [searchValue, setSearchValue] = useState(initialSearchValue)
+  const router = useRouter()
   const { register, watch } = useForm<SearchFormValues>({
     resolver: yupResolver(searchSchema()),
+    defaultValues: {
+      title: initialSearchValue,
+    },
   })
 
   const { debouncedValue } = useDebounce({
@@ -31,8 +38,19 @@ export default function SearchBar({ onSearch }: Props) {
   }, [watch])
 
   useEffect(() => {
+    if (initialSearchValue) {
+      onSearch(initialSearchValue)
+    }
+  }, [initialSearchValue, onSearch])
+
+  useEffect(() => {
     onSearch(debouncedValue)
-  }, [debouncedValue, onSearch])
+    if (debouncedValue) {
+      router.push(`?search=${debouncedValue}`)
+    } else {
+      router.push('')
+    }
+  }, [debouncedValue, router, onSearch])
 
   return (
     <form className=" mb-5 w-full">

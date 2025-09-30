@@ -15,11 +15,13 @@ import { TodoFormValues } from '@/schemas/todo.schema'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import type { Todo } from '@/types/todo.types'
 import { useTranslations } from 'next-intl'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
+import { useSearchParams } from 'next/navigation'
 
 export default function Todo() {
   const dispatch = useAppDispatch()
+  const searchParams = useSearchParams()
   const {
     value: tasks,
     initialLoading,
@@ -31,6 +33,24 @@ export default function Todo() {
 
   const [filteredTasks, setFilteredTasks] = useState<Todo[]>([])
   const [isFiltered, setIsFiltered] = useState(false)
+  const [initialSearchValue, setInitialSearchValue] = useState('')
+
+  const handleSearch = useCallback(
+    (value: string) => {
+      if (value) {
+        setFilteredTasks(
+          tasks.filter((task) =>
+            task.title.toLowerCase().includes(value.toLowerCase()),
+          ),
+        )
+        setIsFiltered(true)
+      } else {
+        setFilteredTasks(tasks)
+        setIsFiltered(false)
+      }
+    },
+    [tasks],
+  )
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -38,6 +58,19 @@ export default function Todo() {
     }
     fetchTasks()
   }, [dispatch])
+
+  useEffect(() => {
+    const searchValue = searchParams.get('search')
+    if (searchValue) {
+      setInitialSearchValue(searchValue)
+    }
+  }, [searchParams])
+
+  useEffect(() => {
+    if (tasks.length > 0 && initialSearchValue) {
+      handleSearch(initialSearchValue)
+    }
+  }, [tasks, initialSearchValue, handleSearch])
 
   useEffect(() => {
     if (!isFiltered) {
@@ -94,13 +127,6 @@ export default function Todo() {
     }
   }
 
-  const handleSearch = (value: string) => {
-    setFilteredTasks(
-      tasks.filter((task) =>
-        task.title.toLowerCase().includes(value.toLowerCase()),
-      ),
-    )
-  }
   const handlePageChange = async (page: number) => {
     await dispatch(getAll(page))
   }
