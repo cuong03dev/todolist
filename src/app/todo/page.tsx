@@ -101,9 +101,13 @@ export default function Todo() {
       ),
     )
   }
-
+  const handlePageChange = async (page: number) => {
+    await dispatch(getAll(page))
+  }
   const { currentPage, handlePageClick, isPageLoading } = usePagination({
     totalPages,
+    onPageChange: handlePageChange,
+    initialPage: 1,
   })
 
   return (

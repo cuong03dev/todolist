@@ -1,21 +1,25 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { getAll } from '@/features/todo/todoSlice'
-import { useAppDispatch } from '@/store/hooks'
 
 interface UsePaginationProps {
   totalPages: number
+  onPageChange: (page: number) => Promise<void>
+  initialPage: number
 }
 
-export const usePagination = ({ totalPages }: UsePaginationProps) => {
+export const usePagination = ({
+  totalPages,
+  onPageChange,
+  initialPage,
+}: UsePaginationProps) => {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage, setCurrentPage] = useState(initialPage)
   const [isPageLoading, setIsPageLoading] = useState(false)
-  const dispatch = useAppDispatch()
 
   const handlePageClick = (page: number) => {
-    if (page === currentPage || isPageLoading) return
+    if (page === currentPage || isPageLoading || page > totalPages || page < 1)
+      return
     const params = new URLSearchParams(searchParams.toString())
     params.set('page', page.toString())
     router.push(`?${params.toString()}`)
@@ -23,10 +27,14 @@ export const usePagination = ({ totalPages }: UsePaginationProps) => {
 
   useEffect(() => {
     const handlePageChangeEffect = async (page: number) => {
-      setIsPageLoading(true)
-      setCurrentPage(page)
-      await dispatch(getAll(page))
-      setIsPageLoading(false)
+      try {
+        setIsPageLoading(true)
+        setCurrentPage(page)
+        await onPageChange(page)
+        setIsPageLoading(false)
+      } catch (error) {
+        setIsPageLoading(false)
+      }
     }
 
     const pageParam = searchParams.get('page')
@@ -41,7 +49,7 @@ export const usePagination = ({ totalPages }: UsePaginationProps) => {
         handlePageChangeEffect(page)
       }
     }
-  }, [searchParams, totalPages, currentPage, dispatch])
+  }, [searchParams, totalPages, currentPage, onPageChange])
 
   return { currentPage, handlePageClick, isPageLoading }
 }
