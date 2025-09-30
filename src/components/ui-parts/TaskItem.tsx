@@ -85,22 +85,26 @@ export default function TaskItem({ task, isFinished }: Props) {
               </div>
             </div>
             <div className="flex justify-between items-center gap-4">
-              <Button
-                onClick={() => {
-                  handleDelete(task?._id ?? '')
-                }}
-                type="button"
-                className="text-white bg-red-700 px-4 py-2 rounded-xl text-sm font-medium"
-              >
-                <BinIcon className="w-6 h-6" />
-              </Button>
-              <Button
-                type="button"
-                onClick={() => setIsOpen(true)}
-                className="text-white bg-blue-700 px-4 py-2 rounded-xl text-sm font-medium"
-              >
-                <EditIcon className="w-6 h-6" />
-              </Button>
+              {!isFinished && (
+                <>
+                  <Button
+                    onClick={() => {
+                      handleDelete(task?._id ?? '')
+                    }}
+                    type="button"
+                    className="text-white bg-red-700 px-4 py-2 rounded-xl text-sm font-medium"
+                  >
+                    <BinIcon className="w-6 h-6" />
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => setIsOpen(true)}
+                    className="text-white bg-blue-700 px-4 py-2 rounded-xl text-sm font-medium"
+                  >
+                    <EditIcon className="w-6 h-6" />
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>

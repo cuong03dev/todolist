@@ -19,7 +19,7 @@ export async function POST(req: Request) {
         },
         { status: res.status },
       )
-    } catch (_) {
+    } catch {
       return Response.json(
         {
           message: `Login failed (${res.status}: ${res.statusText})`,
@@ -31,7 +31,9 @@ export async function POST(req: Request) {
   }
 
   const { accessToken, refreshToken } = await res.json()
-  const response = NextResponse.json({ accessToken })
+  const response = NextResponse.json({
+    success: true,
+  })
   response.cookies.set('accessToken', accessToken, {
     httpOnly: false,
     secure: process.env.NODE_ENV === 'production',

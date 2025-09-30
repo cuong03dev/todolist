@@ -1,6 +1,7 @@
 {
   "Todo": {
     "title": "Danh sách công việc",
+    "loading": "Đang xử lý...",
     "add_task_placeholder": "Thêm công việc mới",
     "detail_task_title": "Chi tiết công việc",
     "add_task_content_placeholder": "Nội dung công việc",
@@ -9,6 +10,7 @@
     "update_button": "Lưu",
     "edit_button": "Sửa",
     "empty": "Danh sách trống",
+    "logout": "Đăng xuất",
     "errors": {
       "required": "Công việc không được để trống",
       "content_required": "Nội dung công việc không được để trống"

@@ -8,8 +8,9 @@ import Link from 'next/link'
 import { routes } from '@/config/routes'
 import { LoginFormValues, loginSchema } from '@/schemas/auth.schema'
 import { useRouter } from 'next/navigation'
-// import { http } from '@/lib/axios'
 import { toast } from 'sonner'
+import { useState } from 'react'
+import LoadingOverlay from '@/components/ui-parts/LoadingOverlay'
 
 const FORM_STYLES = {
   labelClass: 'block text-sm font-medium text-gray-700',
@@ -20,6 +21,7 @@ const FORM_STYLES = {
 export default function LoginPage() {
   const t = useTranslations('Login')
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
   const {
     register,
     handleSubmit,
@@ -29,6 +31,7 @@ export default function LoginPage() {
   })
   const onSubmit = async (data: LoginFormValues) => {
     try {
+      setIsLoading(true)
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
@@ -43,16 +46,20 @@ export default function LoginPage() {
       if (!response.ok) {
         const errorData = await response.json()
         toast.error(errorData.message)
+        setIsLoading(false)
         return
       }
 
       toast.success(t('notify.login_success'))
       router.push(routes.todo)
-    } catch {}
+    } catch {
+      setIsLoading(false)
+    }
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative">
+      <LoadingOverlay isLoading={isLoading} message={t('loading')} />
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           {t('title')}
@@ -96,7 +103,8 @@ export default function LoginPage() {
             />
             <Button
               type="submit"
-              className="cursor-pointer group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              disabled={isLoading}
+              className="cursor-pointer group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed"
             >
               {t('button')}
             </Button>
