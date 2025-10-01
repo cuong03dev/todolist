@@ -28,10 +28,7 @@ export default function Todo() {
   const t = useTranslations('Todo')
   const [isOpen, setIsOpen] = useState(false)
   const searchParams = useSearchParams()
-  const pageParam = searchParams.get('page')
-  const [currentPage, setCurrentPage] = useState(
-    pageParam ? parseInt(pageParam) : 1,
-  )
+  const pageParam = searchParams.get('page') || '1'
   const [filteredTasks, setFilteredTasks] = useState<Todo[]>([])
 
   const handleSearch = useCallback(
@@ -50,16 +47,8 @@ export default function Todo() {
   )
 
   useEffect(() => {
-    const pageParam = searchParams.get('page')
-    const newPage = pageParam ? parseInt(pageParam) : 1
-    if (newPage !== currentPage) {
-      setCurrentPage(newPage)
-    }
-  }, [searchParams, currentPage])
-
-  useEffect(() => {
-    dispatch(getAll(currentPage))
-  }, [dispatch, currentPage])
+    dispatch(getAll(parseInt(pageParam)))
+  }, [dispatch, pageParam])
 
   const pendingTasks = useMemo(
     () => filteredTasks.filter((task) => !task.is_finished),
@@ -85,7 +74,7 @@ export default function Todo() {
         is_finished: values.is_finished || false,
       }),
     )
-    await dispatch(getAll(currentPage))
+    await dispatch(getAll(parseInt(pageParam)))
     handleClose()
     toast.success(t('notify.created_success'))
   }
@@ -156,7 +145,7 @@ export default function Todo() {
         {filteredTasks.length > 0 && totalPages > 1 && (
           <div className="mt-5 flex justify-center pb-6">
             <Pagination
-              currentPage={currentPage}
+              currentPage={parseInt(pageParam)}
               totalPages={totalPages}
               onPageChange={handlePageClick}
             />
