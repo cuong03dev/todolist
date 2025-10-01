@@ -1,9 +1,6 @@
-import { SearchFormValues, searchSchema } from '@/schemas/todo.schema'
 import { useDebounce } from '@/hooks/useDebounce'
-import { yupResolver } from '@hookform/resolvers/yup'
 import { useTranslations } from 'next-intl'
 import React, { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
 import { SearchIcon } from '../ui/Icon'
 import Input from '../ui/Input'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -18,31 +15,11 @@ export default function SearchBar({ onSearch }: Props) {
   const initialSearchValue = searchParams.get('search') || ''
   const [searchValue, setSearchValue] = useState(initialSearchValue)
   const router = useRouter()
-  const { register, watch } = useForm<SearchFormValues>({
-    resolver: yupResolver(searchSchema()),
-    defaultValues: {
-      title: initialSearchValue,
-    },
-  })
 
   const { debouncedValue } = useDebounce({
     value: searchValue,
     delay: 500,
   })
-
-  useEffect(() => {
-    const subscription = watch((value) => {
-      setSearchValue(value.title || '')
-    })
-    return () => subscription.unsubscribe()
-  }, [watch])
-
-  useEffect(() => {
-    if (initialSearchValue) {
-      onSearch(initialSearchValue)
-    }
-  }, [initialSearchValue, onSearch])
-
   useEffect(() => {
     onSearch(debouncedValue)
 
@@ -56,6 +33,10 @@ export default function SearchBar({ onSearch }: Props) {
 
     router.push(`?${params.toString()}`, { scroll: false })
   }, [debouncedValue, router, onSearch, searchParams])
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value)
+  }
   return (
     <form className=" mb-5 w-full">
       <label
@@ -73,7 +54,8 @@ export default function SearchBar({ onSearch }: Props) {
           id="default-search"
           className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder={t('placeholder')}
-          {...register('title')}
+          value={searchValue}
+          onChange={handleChange}
         />
       </div>
     </form>

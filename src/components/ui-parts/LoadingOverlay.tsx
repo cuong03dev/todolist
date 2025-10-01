@@ -4,14 +4,14 @@ import React from 'react'
 import Loading from './Loading'
 
 interface LoadingOverlayProps {
-  isLoading: boolean
+  isLoading?: boolean
   message?: string
   bgColor?: string
   bgOpacity?: string
 }
 
 const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
-  isLoading,
+  isLoading = true,
   message,
   bgColor = 'bg-gray-800',
   bgOpacity = 'bg-opacity-75',

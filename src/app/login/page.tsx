@@ -9,8 +9,7 @@ import { routes } from '@/config/routes'
 import { LoginFormValues, loginSchema } from '@/schemas/auth.schema'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { useState } from 'react'
-import LoadingOverlay from '@/components/ui-parts/LoadingOverlay'
+import { useLoading } from '@/contexts/LoadingContext'
 
 const FORM_STYLES = {
   labelClass: 'block text-sm font-medium text-gray-700',
@@ -21,7 +20,7 @@ const FORM_STYLES = {
 export default function LoginPage() {
   const t = useTranslations('Login')
   const router = useRouter()
-  const [isLoading, setIsLoading] = useState(false)
+  const { isLoading, setLoading } = useLoading()
   const {
     register,
     handleSubmit,
@@ -31,7 +30,7 @@ export default function LoginPage() {
   })
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      setIsLoading(true)
+      setLoading(true)
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
@@ -46,20 +45,20 @@ export default function LoginPage() {
       if (!response.ok) {
         const errorData = await response.json()
         toast.error(errorData.message)
-        setIsLoading(false)
+        setLoading(false)
         return
       }
 
       toast.success(t('notify.login_success'))
+      setLoading(false)
       router.push(routes.todo)
     } catch {
-      setIsLoading(false)
+      setLoading(false)
     }
   }
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative">
-      <LoadingOverlay isLoading={isLoading} message={t('loading')} />
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           {t('title')}

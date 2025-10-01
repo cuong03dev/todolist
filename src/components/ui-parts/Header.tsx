@@ -4,7 +4,6 @@ import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import LoadingOverlay from './LoadingOverlay'
 
 import {
   useFloating,
@@ -16,11 +15,12 @@ import Menu from './Menu'
 import Button from '../ui/Button'
 import { LogoutIcon } from '../ui/Icon'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
+import { useLoading } from '@/contexts/LoadingContext'
 
 export default function Header() {
   const router = useRouter()
   const t = useTranslations('Todo')
-  const [isLoading, setIsLoading] = useState(false)
+  const { setLoading } = useLoading()
   const [isOpen, setIsOpen] = useState(false)
 
   const { refs, floatingStyles, context } = useFloating({
@@ -32,11 +32,12 @@ export default function Header() {
     handleClose: safePolygon(),
   })
 
-  const handleLogout = () => {
-    setIsLoading(true)
+  const handleLogout = async () => {
+    setLoading(true)
+    await new Promise((resolve) => setTimeout(resolve, 1000))
     Cookies.remove('accessToken')
     Cookies.remove('refreshToken')
-
+    setLoading(false)
     router.push(routes.login)
   }
   const user = useCurrentUser()
@@ -52,7 +53,6 @@ export default function Header() {
   ]
   return (
     <>
-      <LoadingOverlay isLoading={isLoading} message={t('loading')} />
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
