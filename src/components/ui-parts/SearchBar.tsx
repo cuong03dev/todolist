@@ -27,7 +27,7 @@ export default function SearchBar({ onSearch }: Props) {
 
   const { debouncedValue } = useDebounce({
     value: searchValue,
-    delay: 2000,
+    delay: 500,
   })
 
   useEffect(() => {

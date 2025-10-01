@@ -17,11 +17,9 @@ import type { Todo } from '@/types/todo.types'
 import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
-import { useSearchParams } from 'next/navigation'
 
 export default function Todo() {
   const dispatch = useAppDispatch()
-  const searchParams = useSearchParams()
   const {
     value: tasks,
     initialLoading,
@@ -32,8 +30,6 @@ export default function Todo() {
   const [isOpen, setIsOpen] = useState(false)
 
   const [filteredTasks, setFilteredTasks] = useState<Todo[]>([])
-  const [isFiltered, setIsFiltered] = useState(false)
-  const [initialSearchValue, setInitialSearchValue] = useState('')
 
   const handleSearch = useCallback(
     (value: string) => {
@@ -43,10 +39,8 @@ export default function Todo() {
             task.title.toLowerCase().includes(value.toLowerCase()),
           ),
         )
-        setIsFiltered(true)
       } else {
         setFilteredTasks(tasks)
-        setIsFiltered(false)
       }
     },
     [tasks],
@@ -55,25 +49,6 @@ export default function Todo() {
   useEffect(() => {
     dispatch(getAll())
   }, [dispatch])
-
-  useEffect(() => {
-    const searchValue = searchParams.get('search')
-    if (searchValue) {
-      setInitialSearchValue(searchValue)
-    }
-  }, [searchParams])
-
-  useEffect(() => {
-    if (tasks.length > 0 && initialSearchValue) {
-      handleSearch(initialSearchValue)
-    }
-  }, [tasks, initialSearchValue, handleSearch])
-
-  useEffect(() => {
-    if (!isFiltered) {
-      setFilteredTasks(tasks)
-    }
-  }, [tasks, isFiltered])
 
   const pendingTasks = useMemo(
     () => filteredTasks.filter((task) => !task.is_finished),
@@ -118,10 +93,8 @@ export default function Todo() {
         return taskDate >= fromDate && taskDate <= toDate
       })
       setFilteredTasks(filtered)
-      setIsFiltered(true)
     } else if (filterType === 'all') {
       setFilteredTasks(tasks)
-      setIsFiltered(false)
     }
   }
 
