@@ -3,9 +3,9 @@ import { routes } from '@/config/routes'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
+import { useState, useEffect } from 'react'
 
 import Menu from './Menu'
-import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { useLoading } from '@/contexts/LoadingContext'
 import Popover from './Popover'
 import Avatar from './Avatar'
@@ -14,19 +14,23 @@ export default function Header() {
   const router = useRouter()
   const t = useTranslations('Todo')
   const { setLoading } = useLoading()
+  const [email, setEmail] = useState<string | undefined>(undefined)
+
+  useEffect(() => {
+    setEmail(Cookies.get('email'))
+  }, [])
 
   const handleLogout = async () => {
     setLoading(true)
-    await new Promise((resolve) => setTimeout(resolve, 1000))
     Cookies.remove('accessToken')
     Cookies.remove('refreshToken')
+    Cookies.remove('email')
     setLoading(false)
     router.push(routes.login)
   }
-  const user = useCurrentUser()
   const MENU_ITEMS = [
     {
-      label: user?.user.email || '',
+      label: email || '',
       onClick: () => {},
       separator: true,
     },
@@ -48,7 +52,7 @@ export default function Header() {
                 </div>
               }
             >
-              <Avatar character={user?.user.email?.[0]} />
+              <Avatar character={email?.[0]} />
             </Popover>
           </div>
         </div>

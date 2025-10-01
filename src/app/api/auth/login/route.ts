@@ -1,3 +1,4 @@
+import { decode } from 'jsonwebtoken'
 import { NextResponse } from 'next/server'
 export async function POST(req: Request) {
   const body = await req.json()
@@ -31,6 +32,7 @@ export async function POST(req: Request) {
   }
 
   const { accessToken, refreshToken } = await res.json()
+
   const response = NextResponse.json({
     success: true,
   })

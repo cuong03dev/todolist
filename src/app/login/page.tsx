@@ -10,6 +10,7 @@ import { LoginFormValues, loginSchema } from '@/schemas/auth.schema'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { useLoading } from '@/contexts/LoadingContext'
+import Cookies from 'js-cookie'
 
 const FORM_STYLES = {
   labelClass: 'block text-sm font-medium text-gray-700',
@@ -48,6 +49,11 @@ export default function LoginPage() {
         setLoading(false)
         return
       }
+
+      Cookies.set('email', data.email, {
+        expires: 7,
+        path: '/',
+      })
 
       toast.success(t('notify.login_success'))
       setLoading(false)

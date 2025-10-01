@@ -13,6 +13,7 @@ import { TodoFormValues } from '@/schemas/todo.schema'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import type { Todo } from '@/types/todo.types'
 import { useTranslations } from 'next-intl'
+import { useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -26,7 +27,11 @@ export default function Todo() {
 
   const t = useTranslations('Todo')
   const [isOpen, setIsOpen] = useState(false)
-
+  const searchParams = useSearchParams()
+  const pageParam = searchParams.get('page')
+  const [currentPage, setCurrentPage] = useState(
+    pageParam ? parseInt(pageParam) : 1,
+  )
   const [filteredTasks, setFilteredTasks] = useState<Todo[]>([])
 
   const handleSearch = useCallback(
@@ -45,8 +50,16 @@ export default function Todo() {
   )
 
   useEffect(() => {
-    dispatch(getAll())
-  }, [dispatch])
+    const pageParam = searchParams.get('page')
+    const newPage = pageParam ? parseInt(pageParam) : 1
+    if (newPage !== currentPage) {
+      setCurrentPage(newPage)
+    }
+  }, [searchParams, currentPage])
+
+  useEffect(() => {
+    dispatch(getAll(currentPage))
+  }, [dispatch, currentPage])
 
   const pendingTasks = useMemo(
     () => filteredTasks.filter((task) => !task.is_finished),
@@ -96,13 +109,8 @@ export default function Todo() {
     }
   }
 
-  const handlePageChange = async (page: number) => {
-    await dispatch(getAll(page))
-  }
-  const { currentPage, handlePageClick, isPageLoading } = usePagination({
+  const { handlePageClick } = usePagination({
     totalPages,
-    onPageChange: handlePageChange,
-    initialPage: 1,
   })
 
   return (
@@ -128,9 +136,9 @@ export default function Todo() {
               onFilterChange={handleFilter}
             />
 
-            {(initialLoading || isPageLoading) && <Loading />}
-            {!isPageLoading && <Tasks tasks={pendingTasks} />}
-            {isEmpty && !isPageLoading && (
+            {initialLoading && <Loading />}
+            {!initialLoading && <Tasks tasks={pendingTasks} />}
+            {isEmpty && !initialLoading && (
               <Empty
                 icon={<EmptyIcon className="w-10 h-10" />}
                 title={t('empty')}
@@ -142,17 +150,15 @@ export default function Todo() {
               <div className="font-bold py-3 text-[20px]">Completed</div>
             )}
 
-            {!initialLoading && !isPageLoading && (
-              <Tasks isFinished tasks={completedTasks} />
-            )}
+            {!initialLoading && <Tasks isFinished tasks={completedTasks} />}
           </div>
         </div>
         {filteredTasks.length > 0 && totalPages > 1 && (
           <div className="mt-5 flex justify-center pb-6">
             <Pagination
-              onClick={handlePageClick}
               currentPage={currentPage}
               totalPages={totalPages}
+              onPageChange={handlePageClick}
             />
           </div>
         )}
