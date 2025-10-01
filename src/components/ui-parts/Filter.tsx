@@ -1,9 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef } from 'react'
 import { useTranslations } from 'next-intl'
 import { FilterIcon } from '../ui/Icon'
 import FormField from './FormField'
 import { convertTime } from '@/utils/convertTime'
 import Button from '../ui/Button'
+import { useClickOutside } from '@/hooks/useClickOutSide'
 
 type Props = {
   onFilterChange: (
@@ -24,24 +25,7 @@ export default function Filter({ onFilterChange }: Props) {
   const filterContainerRef = useRef<HTMLDivElement>(null)
   const t = useTranslations('Filter')
 
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        filterContainerRef.current &&
-        !filterContainerRef.current.contains(event.target as Node)
-      ) {
-        setIsShow(false)
-      }
-    }
-
-    if (isShow) {
-      document.addEventListener('mousedown', handleClickOutside)
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [isShow])
+  useClickOutside(filterContainerRef, () => setIsShow(false))
 
   const handleOpen = () => {
     setIsShow(!isShow)
