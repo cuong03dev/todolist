@@ -1,13 +1,11 @@
 'use client'
 import Empty from '@/components/ui-parts/Empty'
-import Filter from '@/components/ui-parts/Filter'
 import Loading from '@/components/ui-parts/Loading'
 import Modal from '@/components/ui-parts/Modal'
 import Pagination from '@/components/ui-parts/Pagination'
-import SearchBar from '@/components/ui-parts/SearchBar'
 import Tasks from '@/components/ui-parts/Tasks'
 import TodoInput from '@/components/ui-parts/TodoInput'
-import Button from '@/components/ui/Button'
+import TodoToolbar from '@/components/ui-parts/TodoToolbar'
 import { EmptyIcon } from '@/components/ui/Icon'
 import { addTodo, getAll } from '@/features/todo/todoSlice'
 import { usePagination } from '@/hooks/usePagination'
@@ -124,21 +122,11 @@ export default function Todo() {
                 onClose={handleClose}
               />
             </Modal>
-            <div className="flex justify-between items-center mb-4">
-              <div className="text-3xl font-medium">Todo</div>
-              <Button
-                onClick={() => setIsOpen(true)}
-                type="button"
-                className="text-white bg-[#3a3a3c] focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
-              >
-                {t('add_task_button')}
-              </Button>
-            </div>
-
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
-              <SearchBar onSearch={handleSearch} />
-            </div>
-            <Filter onFilterChange={handleFilter} />
+            <TodoToolbar
+              onAddClick={() => setIsOpen(true)}
+              onSearch={handleSearch}
+              onFilterChange={handleFilter}
+            />
 
             {(initialLoading || isPageLoading) && <Loading />}
             {!isPageLoading && <Tasks tasks={pendingTasks} />}

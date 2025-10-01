@@ -12,8 +12,6 @@ interface Props {
   onSubmit?: (data: TodoFormValues) => void
   defaultValues?: Partial<TodoFormValues>
   mode?: 'add' | 'edit'
-  onDelete?: (id: string) => void
-  onEdit?: (data: TodoFormValues) => void
 }
 
 export default function TodoInput({
@@ -21,7 +19,6 @@ export default function TodoInput({
   onSubmit,
   defaultValues,
   mode,
-  onDelete,
   ...props
 }: Props) {
   const {
