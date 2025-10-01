@@ -53,10 +53,7 @@ export default function Todo() {
   )
 
   useEffect(() => {
-    const fetchTasks = async () => {
-      await dispatch(getAll())
-    }
-    fetchTasks()
+    dispatch(getAll())
   }, [dispatch])
 
   useEffect(() => {
