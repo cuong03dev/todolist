@@ -2,35 +2,18 @@
 import { routes } from '@/config/routes'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 
-import {
-  useFloating,
-  useHover,
-  FloatingPortal,
-  safePolygon,
-} from '@floating-ui/react'
 import Menu from './Menu'
-import Button from '../ui/Button'
-import { LogoutIcon } from '../ui/Icon'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { useLoading } from '@/contexts/LoadingContext'
+import Popover from './Popover'
+import Avatar from './Avatar'
 
 export default function Header() {
   const router = useRouter()
   const t = useTranslations('Todo')
   const { setLoading } = useLoading()
-  const [isOpen, setIsOpen] = useState(false)
-
-  const { refs, floatingStyles, context } = useFloating({
-    open: isOpen,
-    onOpenChange: setIsOpen, // Tự động gọi setIsOpen(true/false) khi cần
-  })
-  // context chứa thông tin về vị trí, trạng thái, lifecycle của tooltip
-  useHover(context, {
-    handleClose: safePolygon(),
-  })
 
   const handleLogout = async () => {
     setLoading(true)
@@ -45,6 +28,7 @@ export default function Header() {
     {
       label: user?.user.email || '',
       onClick: () => {},
+      separator: true,
     },
     {
       label: t('logout'),
@@ -53,28 +37,19 @@ export default function Header() {
   ]
   return (
     <>
-      <header className="bg-white shadow-sm">
+      <header className="bg-white shadow-sm fixed top-0 left-0 right-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="text-xl font-bold">Todo App</div>
-            <Button
-              ref={refs.setReference}
-              className="text-white bg-red-500 hover:bg-red-600 focus:ring-4 font-medium rounded-lg text-sm px-2 py-2 disabled:bg-red-400 disabled:cursor-not-allowed"
-            >
-              <LogoutIcon />
-            </Button>
-
-            {isOpen && (
-              <FloatingPortal>
-                <div
-                  ref={refs.setFloating}
-                  style={floatingStyles}
-                  className="bg-white min-w-[200px] text-gray-700 rounded-lg text-sm shadow-2xl border border-gray-200 z-50"
-                >
+            <Popover
+              content={
+                <div className="bg-white min-w-[200px] text-gray-700 rounded-lg text-sm shadow-2xl border border-gray-200 z-50">
                   <Menu data={MENU_ITEMS} />
                 </div>
-              </FloatingPortal>
-            )}
+              }
+            >
+              <Avatar character={user?.user.email?.[0]} />
+            </Popover>
           </div>
         </div>
       </header>

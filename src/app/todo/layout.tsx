@@ -8,7 +8,7 @@ export default function TodoLayout({
   return (
     <>
       <Header />
-      {children}
+      <div className="mt-20 pb-10">{children}</div>
     </>
   )
 }

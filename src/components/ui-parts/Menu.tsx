@@ -5,6 +5,7 @@ interface MenuProps {
   data: {
     label: string
     onClick: () => void
+    separator?: boolean
   }[]
 }
 
@@ -20,6 +21,7 @@ export default function Menu({ data }: MenuProps) {
           >
             {item.label}
           </Button>
+          {item.separator && <div className="h-[1px] bg-gray-200 my-1" />}
         </li>
       ))}
     </ul>
