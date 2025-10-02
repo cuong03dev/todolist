@@ -23,7 +23,7 @@ export default function TodoToolbar({
   return (
     <>
       <div className="flex justify-between items-center mb-4">
-        <div className="text-3xl font-medium">Todo</div>
+        <div className="text-3xl font-medium">{t('name')}</div>
         <Button
           onClick={onAddClick}
           type="button"

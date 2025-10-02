@@ -1,7 +1,7 @@
 'use client'
 import LoadingOverlay from '@/components/ui-parts/LoadingOverlay'
 import { useTranslations } from 'next-intl'
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useState } from 'react'
 type LoadingContextType = {
   isLoading: boolean
   setLoading: (value: boolean) => void
@@ -22,12 +22,4 @@ export default function LoadingProvider({
       {isLoading && <LoadingOverlay message={t('loading')} />}
     </LoadingContext.Provider>
   )
-}
-
-export function useLoading() {
-  const context = useContext(LoadingContext)
-  if (context === undefined) {
-    throw new Error('useLoading must be used within a LoadingProvider')
-  }
-  return context
 }

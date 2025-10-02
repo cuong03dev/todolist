@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 interface UsePaginationProps {

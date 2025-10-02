@@ -1,5 +1,6 @@
 {
   "Todo": {
+    "name": "Todo list",
     "title": "Danh sách công việc",
     "loading": "Đang xử lý...",
     "add_task_placeholder": "Thêm công việc mới",

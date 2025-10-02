@@ -9,8 +9,9 @@ import { routes } from '@/config/routes'
 import { LoginFormValues, loginSchema } from '@/schemas/auth.schema'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { useLoading } from '@/contexts/LoadingContext'
 import Cookies from 'js-cookie'
+import { ErrorResponse } from '@/types/error.types'
+import { useLoading } from '@/hooks/useLoading'
 
 const FORM_STYLES = {
   labelClass: 'block text-sm font-medium text-gray-700',
@@ -45,9 +46,9 @@ export default function LoginPage() {
 
       if (!response.ok) {
         const errorData = await response.json()
-        toast.error(errorData.message)
-        setLoading(false)
-        return
+        throw new Error(
+          errorData?.message || `Login failed (${response.status})`,
+        )
       }
 
       Cookies.set('email', data.email, {
@@ -58,7 +59,9 @@ export default function LoginPage() {
       toast.success(t('notify.login_success'))
       setLoading(false)
       router.push(routes.todo)
-    } catch {
+    } catch (err) {
+      const error = err as ErrorResponse
+      toast.error(error.message || t('notify.login_failed'))
       setLoading(false)
     }
   }

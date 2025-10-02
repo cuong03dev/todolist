@@ -24,7 +24,6 @@ export default function Filter({ onFilterChange }: Props) {
   const dateToRef = useRef<HTMLInputElement>(null)
   const filterContainerRef = useRef<HTMLDivElement>(null)
   const t = useTranslations('Filter')
-
   useClickOutside(filterContainerRef, () => setIsShow(false))
 
   const handleOpen = () => {
@@ -43,7 +42,6 @@ export default function Filter({ onFilterChange }: Props) {
 
   const handleApplyFilter = () => {
     if (dateRange.from && dateRange.to) {
-      setIsFilterApplied(true)
       onFilterChange('byDateRange', dateRange.from, dateRange.to)
       setIsShow(false)
     }
@@ -51,15 +49,12 @@ export default function Filter({ onFilterChange }: Props) {
 
   const handleClearFilter = () => {
     setDateRange({ from: '', to: '' })
-    setIsFilterApplied(false)
     onFilterChange('all')
     setIsShow(false)
   }
 
-  const [isFilterApplied, setIsFilterApplied] = useState(false)
-
   const getButtonText = () => {
-    if (isFilterApplied && dateRange.from && dateRange.to) {
+    if (dateRange.from && dateRange.to) {
       return `${convertTime(dateRange.from)} - ${convertTime(dateRange.to)}`
     }
     return t('filterByDate')
