@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 
 interface TodoToolbarProps {
   onAddClick: () => void
-  onSearch: (value: string) => void
+  initialValue: string
   onFilterChange: (
     filterType: string,
     dateFrom?: string,
@@ -15,7 +15,7 @@ interface TodoToolbarProps {
 
 export default function TodoToolbar({
   onAddClick,
-  onSearch,
+  initialValue,
   onFilterChange,
 }: TodoToolbarProps) {
   const t = useTranslations('Todo')
@@ -34,7 +34,7 @@ export default function TodoToolbar({
       </div>
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
-        <SearchBar onSearch={onSearch} />
+        <SearchBar initialValue={initialValue} />
       </div>
       <Filter onFilterChange={onFilterChange} />
     </>

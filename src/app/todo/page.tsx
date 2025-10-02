@@ -1,5 +1,6 @@
 'use client'
 import Empty from '@/components/ui-parts/Empty'
+
 import Loading from '@/components/ui-parts/Loading'
 import Modal from '@/components/ui-parts/Modal'
 import Pagination from '@/components/ui-parts/Pagination'
@@ -29,6 +30,7 @@ export default function Todo() {
   const [isOpen, setIsOpen] = useState(false)
   const searchParams = useSearchParams()
   const pageParam = searchParams.get('page') || '1'
+  const searchParam = searchParams.get('search') || ''
   const [filteredTasks, setFilteredTasks] = useState<Todo[]>([])
 
   const handleSearch = useCallback(
@@ -45,6 +47,10 @@ export default function Todo() {
     },
     [tasks],
   )
+
+  useEffect(() => {
+    handleSearch(searchParam)
+  }, [searchParam, handleSearch])
 
   useEffect(() => {
     dispatch(getAll(parseInt(pageParam)))
@@ -121,7 +127,7 @@ export default function Todo() {
             </Modal>
             <TodoToolbar
               onAddClick={() => setIsOpen(true)}
-              onSearch={handleSearch}
+              initialValue={searchParam}
               onFilterChange={handleFilter}
             />
 
