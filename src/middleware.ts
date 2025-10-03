@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { routes } from './config/routes'
 
 export function middleware(request: NextRequest) {
   const token = request.cookies.get('accessToken')?.value
@@ -7,13 +8,13 @@ export function middleware(request: NextRequest) {
 
   if (
     token &&
-    (pathname.startsWith('/login') || pathname.startsWith('/register'))
+    (pathname.startsWith(routes.login) || pathname.startsWith(routes.register))
   ) {
-    return NextResponse.redirect(new URL('/todo', request.url))
+    return NextResponse.redirect(new URL(routes.todo, request.url))
   }
 
-  if (!token && pathname.startsWith('/todo')) {
-    return NextResponse.redirect(new URL('/login', request.url))
+  if (!token && pathname.startsWith(routes.todo)) {
+    return NextResponse.redirect(new URL(routes.login, request.url))
   }
 
   return NextResponse.next()

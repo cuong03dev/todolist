@@ -12,8 +12,6 @@ interface Props {
   onSubmit?: (data: TodoFormValues) => void
   defaultValues?: Partial<TodoFormValues>
   mode?: 'add' | 'edit'
-  onDelete?: (id: string) => void
-  onEdit?: (data: TodoFormValues) => void
 }
 
 export default function TodoInput({
@@ -21,7 +19,6 @@ export default function TodoInput({
   onSubmit,
   defaultValues,
   mode,
-  onDelete,
   ...props
 }: Props) {
   const {
@@ -69,32 +66,25 @@ export default function TodoInput({
         {errors.deadline && (
           <p className="text-sm text-red-500 mt-2">{errors.deadline.message}</p>
         )}
-        {mode === 'add' && (
-          <Button
-            type="submit"
-            className="px-4 mt-5 py-2 cursor-pointer bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-          >
-            {t('add_task_button')}
-          </Button>
-        )}
-
-        {mode === 'edit' && (
-          <div className="flex gap-4 mt-5">
+        <div className="flex justify-end gap-4 mt-5">
+          {mode === 'add' && (
             <Button
-              type="button"
-              onClick={() => onDelete && onDelete('')}
-              className="text-white bg-red-700 px-4 py-2 rounded-xl text-sm font-medium "
+              type="submit"
+              className="px-4 mt-5 py-2 cursor-pointer bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
             >
-              {t('delete_button')}
+              {t('add_task_button')}
             </Button>
+          )}
+
+          {mode === 'edit' && (
             <Button
               type="submit"
               className="text-white bg-blue-500 px-4 py-2 rounded-xl text-sm font-medium"
             >
               {t('update_button')}
             </Button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </form>
   )

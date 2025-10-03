@@ -7,6 +7,7 @@ import { getMessages } from './utils/messages'
 import { getLocale } from './utils/locale'
 import Loading from './components/ui-parts/Loading'
 import { Suspense } from 'react'
+import LoadingProvider from './contexts/LoadingContext'
 export default function Provider({
   children,
 }: Readonly<{
@@ -18,7 +19,9 @@ export default function Provider({
     <NextIntlClientProvider messages={messages} locale={locale}>
       <Toaster richColors />
       <ReduxProvider store={store}>
-        <Suspense fallback={<Loading />}>{children}</Suspense>
+        <LoadingProvider>
+          <Suspense fallback={<Loading />}>{children}</Suspense>
+        </LoadingProvider>
       </ReduxProvider>
     </NextIntlClientProvider>
   )
