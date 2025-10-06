@@ -5,16 +5,16 @@ import Link from 'next/link'
 type Props = {
   currentPage: number
   totalPages: number
-  onClick: (page: number) => void
+  onPageChange: (page: number) => void
 }
 
 export default function Pagination({
   currentPage,
   totalPages,
-  onClick,
+  onPageChange,
 }: Props) {
   const handlePageClick = (page: number) => {
-    onClick(page)
+    onPageChange(page)
   }
 
   return (

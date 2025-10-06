@@ -1,13 +1,21 @@
 {
   "Todo": {
+    "name": "Todo list",
     "title": "Danh sách công việc",
+    "loading": "Đang xử lý...",
     "add_task_placeholder": "Thêm công việc mới",
     "detail_task_title": "Chi tiết công việc",
     "add_task_content_placeholder": "Nội dung công việc",
     "add_task_button": "Thêm",
     "delete_button": "Xóa",
     "update_button": "Lưu",
+    "edit_button": "Sửa",
     "empty": "Danh sách trống",
+    "logout": "Đăng xuất",
+    "confirm_delete_title": "Xóa công việc",
+    "confirm_delete_message": "Bạn có chắc chắn muốn xóa công việc này không?",
+    "cancel": "Hủy",
+    "delete": "Xóa",
     "errors": {
       "required": "Công việc không được để trống",
       "content_required": "Nội dung công việc không được để trống"

@@ -35,7 +35,7 @@ export default function RegisterPage() {
       })
       toast.success(t('notify.register_success'))
       router.push(routes.login)
-    } catch (_) {}
+    } catch  {}
   }
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">

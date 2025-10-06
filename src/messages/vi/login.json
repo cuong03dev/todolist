@@ -2,6 +2,7 @@
   "Login": {
     "title": "Đăng nhập vào tài khoản",
     "button": "Đăng nhập",
+    "loading": "Đang xử lý...",
     "email_label": "Email",
     "password_label": "Mật khẩu",
     "email_placeholder": "Nhập email",
