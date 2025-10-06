@@ -1,58 +1,11 @@
 import Cookies from 'js-cookie'
-import axios, { AxiosError } from 'axios'
+import axios, { AxiosError, AxiosInstance } from 'axios'
 import { toast } from 'sonner'
 import { routes } from '@/config/routes'
 import messages from '@/messages/vi/common.json'
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/'
-
-export const http = axios.create({
-  baseURL: baseUrl,
-  headers: { 'Content-Type': 'application/json' },
-  withCredentials: true,
-})
-
-http.interceptors.request.use(
-  (config) => {
-    const token = Cookies.get('accessToken')
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
-    }
-    return config
-  },
-  (error) => Promise.reject(error),
-)
-
-const handleTokenRefresh = async (error: AxiosError) => {
-  const refreshToken = Cookies.get('refreshToken')
-  if (refreshToken) {
-    try {
-      const res = await axios.post(
-        `${baseUrl}user/reissue`,
-        { refreshToken },
-        { withCredentials: true },
-      )
-
-      const newAccessToken = res?.data
-      Cookies.set('accessToken', newAccessToken, { expires: 1 / 96 })
-
-      if (error.config) {
-        error.config.headers.Authorization = `Bearer ${newAccessToken}`
-        return http.request(error.config)
-      }
-      return Promise.reject(error)
-    } catch {
-      Cookies.remove('accessToken')
-      Cookies.remove('refreshToken')
-      window.location.href = routes.login
-      return Promise.reject(toast.error(messages.System.errors.session_expired))
-    }
-  } else {
-    window.location.href = routes.login
-    return Promise.reject(toast.error(messages.System.errors.unauthorized))
-  }
-}
-
+const baseUrlServer = process.env.NEXT_PUBLIC_API_URL_SERVER || 'http://localhost:3000/'
 const getErrorMessage = (status: number, data: { message?: string }) => {
   switch (status) {
     case 400:
@@ -75,21 +28,107 @@ const getErrorMessage = (status: number, data: { message?: string }) => {
   }
 }
 
-http.interceptors.response.use(
-  (response) => response.data,
+const createAxiosInstance = (isServer: boolean = false, isServerUrl: boolean = false): AxiosInstance => {
+  const instance = axios.create({
+    baseURL: isServerUrl ? baseUrlServer : baseUrl,
+    headers: { 'Content-Type': 'application/json' },
+    ...(isServer ? { timeout: 10000 } : { withCredentials: true }),
+  })
 
-  async (error) => {
-    if (error.response) {
-      const { status, data } = error.response
-
-      if (status === 401) {
-        return handleTokenRefresh(error)
+  instance.interceptors.request.use(
+    (config) => {
+      if (!isServer && typeof window !== 'undefined') {
+        const token = Cookies.get('accessToken')
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`
+        }
       }
+      return config
+    },
+    (error) => Promise.reject(error),
+  )
 
-      const errorMessage = getErrorMessage(status, data)
-      return Promise.reject(toast.error(errorMessage))
+  if (isServer) {
+    instance.interceptors.response.use(
+      (response) => response,
+      (error: AxiosError) => {
+        if (error.response) {
+          const { status, data } = error.response
+          const errorMessage = getErrorMessage(status, data as { message?: string })
+          
+          return Promise.reject({
+            status,
+            message: errorMessage,
+            data,
+          })
+        } else if (error.request) {
+          return Promise.reject({
+            status: 500,
+            message: messages.System.errors.network_error,
+          })
+        } else {
+          return Promise.reject({
+            status: 500,
+            message: messages.System.errors.unknown_error,
+          })
+        }
+      },
+    )
+  } else {
+    const handleTokenRefresh = async (error: AxiosError) => {
+      const refreshToken = Cookies.get('refreshToken')
+      if (refreshToken) {
+        try {
+          const res = await axios.post(
+            `${baseUrl}user/reissue`,
+            { refreshToken },
+            { withCredentials: true },
+          )
+
+          const newAccessToken = res?.data
+          Cookies.set('accessToken', newAccessToken, { expires: 1 / 96 })
+
+          if (error.config) {
+            error.config.headers.Authorization = `Bearer ${newAccessToken}`
+            return instance.request(error.config)
+          }
+          return Promise.reject(error)
+        } catch {
+          Cookies.remove('accessToken')
+          Cookies.remove('refreshToken')
+          window.location.href = routes.login
+          return Promise.reject(toast.error(messages.System.errors.session_expired))
+        }
+      } else {
+        window.location.href = routes.login
+        return Promise.reject(toast.error(messages.System.errors.unauthorized))
+      }
     }
 
-    return Promise.reject(toast.error(messages.System.errors.network_error))
-  },
-)
+    instance.interceptors.response.use(
+      (response) => response.data,
+      async (error) => {
+        if (error.response) {
+          const { status, data } = error.response
+
+          if (status === 401) {
+            return handleTokenRefresh(error)
+          }
+
+          const errorMessage = getErrorMessage(status, data)
+          return Promise.reject(toast.error(errorMessage))
+        }
+
+        return Promise.reject(toast.error(messages.System.errors.network_error))
+      },
+    )
+  }
+
+  return instance
+}
+
+export const http = createAxiosInstance(false, false) // Client-side
+export const httpServer = createAxiosInstance(true, false) // Server-side
+export const httpServerUrl = createAxiosInstance(true, true) // Server-side
+
+export default http

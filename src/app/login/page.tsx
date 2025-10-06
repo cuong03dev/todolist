@@ -10,8 +10,9 @@ import { LoginFormValues, loginSchema } from '@/schemas/auth.schema'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import Cookies from 'js-cookie'
+import { useLoading } from '@/hooks/useLoading' 
 import { ErrorResponse } from '@/types/error.types'
-import { useLoading } from '@/hooks/useLoading'
+import { httpServerUrl } from '@/lib/axios'
 
 const FORM_STYLES = {
   labelClass: 'block text-sm font-medium text-gray-700',
@@ -33,35 +34,27 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormValues) => {
     try {
       setLoading(true)
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: data.email,
-          password: data.password,
-        }),
+  
+      await httpServerUrl.post('/api/auth/login', {
+        username: data.email,
+        password: data.password,
       })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(
-          errorData?.message || `Login failed (${response.status})`,
-        )
-      }
-
+  
       Cookies.set('email', data.email, {
         expires: 7,
         path: '/',
       })
-
+  
       toast.success(t('notify.login_success'))
-      setLoading(false)
       router.push(routes.todo)
     } catch (err) {
       const error = err as ErrorResponse
-      toast.error(error.message || t('notify.login_failed'))
+      const message =
+        error?.message ||
+        t('notify.login_error')
+      
+      toast.error(message)
+    } finally {
       setLoading(false)
     }
   }

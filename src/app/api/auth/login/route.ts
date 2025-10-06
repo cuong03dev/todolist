@@ -1,30 +1,14 @@
 import { API_ROUTES } from '@/config/apiRoutes'
-import { ErrorResponse } from '@/types/error.types'
 import { NextResponse } from 'next/server'
+import { httpServer } from '@/lib/axios'
 
 export async function POST(req: Request) {
   const body = await req.json()
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/'
 
   try {
-    const res = await fetch(`${baseUrl}${API_ROUTES.AUTH.LOGIN}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    })
-
-    if (!res.ok) {
-      let message = 'Login failed'
-      try {
-        const errorData = await res.json()
-        message = errorData.message || message
-      } catch {
-        message = `Login failed (${res.status}: ${res.statusText})`
-      }
-      throw { status: res.status, message }
-    }
-
-    const { accessToken, refreshToken } = await res.json()
+    const { data } = await httpServer.post(API_ROUTES.AUTH.LOGIN, body)
+    
+    const { accessToken, refreshToken } = data
 
     const response = NextResponse.json({ success: true })
 
@@ -45,10 +29,15 @@ export async function POST(req: Request) {
     })
 
     return response
-  } catch (err) {
-    const error = err as ErrorResponse
-    const status = error?.status || 500
-    const message = error?.message || 'Network error. Please try again later.'
+  } catch (err: unknown) {
+    let status = 500
+    let message = 'Network error. Please try again later.'
+
+    if (err && typeof err === 'object' && 'status' in err && 'message' in err) {
+      status = (err as { status: number }).status
+      message = (err as { message: string }).message
+    }
+
 
     return NextResponse.json({ message, error: true }, { status })
   }
